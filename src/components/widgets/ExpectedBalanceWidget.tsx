@@ -21,13 +21,16 @@ export function ExpectedBalanceWidget() {
   // Get live borrow rates
   const usdcBorrowRate = useLiveBorrowRate('USDC')
   const usdsBorrowRate = useLiveBorrowRate('USDS')
+  const usdeBorrowRate = useLiveBorrowRate('USDe')
 
-  const getLiveBorrowRate = (asset: 'USDC' | 'USDS'): number => {
+  const getLiveBorrowRate = (asset: 'USDC' | 'USDS' | 'USDe'): number => {
     switch (asset) {
       case 'USDC':
         return usdcBorrowRate
       case 'USDS':
         return usdsBorrowRate
+      case 'USDe':
+        return usdeBorrowRate
     }
   }
 

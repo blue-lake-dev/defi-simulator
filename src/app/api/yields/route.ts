@@ -39,7 +39,7 @@ const POOL_FILTERS: Record<string, { project: string; symbol: string; pickHighes
 }
 
 // Borrow assets we track
-const BORROW_ASSETS = ['USDC', 'USDS']
+const BORROW_ASSETS = ['USDC', 'USDS', 'USDE']
 
 function isCacheValid(): boolean {
   if (!cachedData) return false
@@ -135,11 +135,18 @@ async function fetchAndProcessData(): Promise<CachedApyData> {
   }
 
   // Process borrow rates
+  // Map API asset names to our naming convention
+  const assetNameMap: Record<string, string> = {
+    'USDC': 'USDC',
+    'USDS': 'USDS',
+    'USDE': 'USDe',
+  }
   const borrowRates: Record<string, number> = {}
   for (const asset of BORROW_ASSETS) {
     const rate = findBorrowRate(borrowPools, asset)
     if (rate !== undefined) {
-      borrowRates[asset] = rate
+      const normalizedName = assetNameMap[asset] || asset
+      borrowRates[normalizedName] = rate
     }
   }
 

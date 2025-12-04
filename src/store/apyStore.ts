@@ -20,7 +20,7 @@ interface ApyState {
   // Actions
   fetchApys: () => Promise<void>
   getApy: (productId: string, fallback: number) => number
-  getBorrowRate: (asset: 'USDC' | 'USDS', fallback: number) => number
+  getBorrowRate: (asset: 'USDC' | 'USDS' | 'USDe', fallback: number) => number
   isCacheValid: () => boolean
 }
 
@@ -136,7 +136,7 @@ export const useApyStore = create<ApyState>((set, get) => ({
     return poolApys[productId] ?? fallback
   },
 
-  getBorrowRate: (asset: 'USDC' | 'USDS', fallback: number) => {
+  getBorrowRate: (asset: 'USDC' | 'USDS' | 'USDe', fallback: number) => {
     const { borrowRates } = get()
     return borrowRates[asset] ?? fallback
   },
