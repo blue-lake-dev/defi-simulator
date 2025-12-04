@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { Modal } from '@/components/ui/Modal'
+import { Logo } from '@/components/ui/Logo'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { BORROW_OPTIONS, getCollateralParams } from '@/lib/constants'
+import { getBorrowAssetLogo, getProtocolLogo } from '@/lib/logos'
 import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
 import type { LeverageConfig } from '@/types'
 
@@ -264,20 +266,24 @@ export function LeverageConfigModal({
 
         {/* Borrow Asset */}
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1">
-            Borrow Asset
-          </label>
+          <div className="flex items-center gap-2 mb-1">
+            <Logo src={getProtocolLogo('Aave V3')} alt="Aave V3" size={18} />
+            <label className="block text-sm font-medium text-gray-900">
+              Borrow Asset <span className="font-normal text-gray-500">(Aave V3)</span>
+            </label>
+          </div>
           <div className="flex gap-2 mt-2">
             {BORROW_OPTIONS.map((option) => (
               <button
                 key={option.asset}
                 onClick={() => setBorrowAsset(option.asset)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
                   borrowAsset === option.asset
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
                 }`}
               >
+                <Logo src={getBorrowAssetLogo(option.asset)} alt={option.asset} size={18} />
                 {option.asset}
               </button>
             ))}

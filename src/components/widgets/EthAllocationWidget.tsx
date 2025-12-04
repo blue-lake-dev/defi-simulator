@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
+import { Logo } from '@/components/ui/Logo'
 import { LeverageConfigModal } from '@/components/modals/LeverageConfigModal'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { getCollateralParams } from '@/lib/constants'
+import { getProtocolLogo, getTokenLogo } from '@/lib/logos'
 import { useLiveProducts } from '@/hooks/useLiveApys'
 import type { LeverageConfig } from '@/types'
 
@@ -111,9 +113,12 @@ export function EthAllocationWidget() {
                   onChange={() => toggleEthAllocation(product.id)}
                   className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
                 />
-                <span className="font-medium text-gray-900 text-sm flex-1 min-w-0 truncate">
-                  {product.protocol} {product.name}
-                </span>
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <Logo src={getTokenLogo(product.name)} alt={product.name} size={20} />
+                  <span className="font-medium text-gray-900 text-sm truncate">
+                    {product.protocol} {product.name}
+                  </span>
+                </div>
                 <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
                   {product.apy.toFixed(2)}%
                 </span>
@@ -167,9 +172,12 @@ export function EthAllocationWidget() {
                     onChange={() => toggleEthAllocation(product.id)}
                     className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
                   />
-                  <span className="font-medium text-gray-900 text-sm flex-1 min-w-0 truncate">
-                    {product.protocol} {product.name}
-                  </span>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Logo src={getTokenLogo(product.name)} alt={product.name} size={20} />
+                    <span className="font-medium text-gray-900 text-sm truncate">
+                      {product.protocol} {product.name}
+                    </span>
+                  </div>
                   <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
                     {product.apy.toFixed(2)}%
                   </span>
