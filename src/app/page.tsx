@@ -7,8 +7,8 @@ import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAlloc
 import { ApyWidget } from '@/components/widgets/ApyWidget'
 import { HealthFactorWidget } from '@/components/widgets/HealthFactorWidget'
 import { LiquidationPriceWidget } from '@/components/widgets/LiquidationPriceWidget'
-import { TotalReturnWidget } from '@/components/widgets/TotalReturnWidget'
 import { AnnualReturnWidget } from '@/components/widgets/AnnualReturnWidget'
+import { ExpectedBalanceWidget } from '@/components/widgets/ExpectedBalanceWidget'
 
 export default function Home() {
   return (
@@ -19,7 +19,7 @@ export default function Home() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {/* Widget Grid - responsive layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
             {/* Row 1: Portfolio Setup + APY */}
             <div className="md:col-span-2 lg:col-span-3">
               <PortfolioSetupWidget />
@@ -36,10 +36,10 @@ export default function Home() {
               <EthAllocationWidget />
             </div>
             <div className="md:col-span-2 lg:col-span-1">
-              <TotalReturnWidget />
+              <AnnualReturnWidget />
             </div>
 
-            {/* Row 3: Health Factor/Liquidation stacked + Stablecoin Allocation + Annual Return */}
+            {/* Row 3: Health Factor/Liquidation stacked + Stablecoin Allocation + Expected Balance */}
             <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4 sm:gap-5">
               <div className="flex-1">
                 <HealthFactorWidget />
@@ -52,7 +52,7 @@ export default function Home() {
               <StablecoinAllocationWidget />
             </div>
             <div className="md:col-span-1 lg:col-span-1">
-              <AnnualReturnWidget />
+              <ExpectedBalanceWidget />
             </div>
           </div>
         </main>

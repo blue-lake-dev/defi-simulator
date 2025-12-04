@@ -69,9 +69,12 @@ export function EthAllocationWidget() {
     <Card
       title="ETH Allocation"
       subtitle={`${formatEth(totalEthAmount)} (${formatUsd(totalEthUsd)}) · Must total 100%`}
+      className="h-full flex flex-col"
+      contentClassName="flex flex-col flex-1"
     >
-      {/* Header Row - visible on lg screens */}
-      <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
+      <div className="flex-1">
+        {/* Header Row - visible on lg screens */}
+        <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
         <div className="w-4" /> {/* Checkbox spacer */}
         <div className="flex-1">Protocol</div>
         <div className="w-12 text-center">APY</div>
@@ -212,10 +215,11 @@ export function EthAllocationWidget() {
             </div>
           )
         })}
+        </div>
       </div>
 
-      {/* Total Progress Bar */}
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      {/* Total Progress Bar - sticky to bottom */}
+      <div className="mt-4 pt-3 border-t border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between text-xs mb-1">
           <span className={isValid ? 'text-green-600 font-medium' : 'text-amber-600 font-medium'}>
             Total: {totalWeight}% · {formatEth(totalEthAmount * (totalWeight / 100))} ({formatUsd(totalEthUsd * (totalWeight / 100))})

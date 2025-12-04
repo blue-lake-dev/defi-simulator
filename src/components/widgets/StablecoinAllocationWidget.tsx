@@ -55,6 +55,7 @@ export function StablecoinAllocationWidget() {
       title="Stablecoin Allocation"
       subtitle={`${formatAmount(baseAmount)} base${borrowedTotal > 0 ? ` + ${formatAmount(borrowedTotal)} leveraged` : ''} · Must total 100%`}
       className="flex flex-col max-h-[500px]"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
     >
       {/* Header Row - visible on lg screens */}
       <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500 flex-shrink-0">

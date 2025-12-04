@@ -6,9 +6,9 @@ import { ETH_PRODUCTS, STABLECOIN_PRODUCTS, getBorrowRate } from '@/lib/constant
 
 export function AnnualReturnWidget() {
   const {
-    investmentAmount,
     ethRatio,
     ethPrice,
+    priceChangeScenario,
     ethAllocations,
     stablecoinAllocations,
     ethAmount,
@@ -18,6 +18,8 @@ export function AnnualReturnWidget() {
 
   const currentEthAmount = ethAmount()
   const currentStableAmount = stablecoinAmount()
+  const priceMultiplier = 1 + priceChangeScenario / 100
+  const projectedEthPrice = ethPrice * priceMultiplier
 
   // Calculate deployment percentage
   const ethTotal = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
@@ -30,7 +32,7 @@ export function AnnualReturnWidget() {
   // Calculate ETH position in ETH terms
   const ethPositionInEth = ethPrice > 0 ? currentEthAmount / ethPrice : 0
 
-  // Calculate ETH product returns (in ETH terms, then convert to USD)
+  // Calculate ETH product returns (in ETH terms)
   const ethProductReturns = ethAllocations
     .filter((a) => a.weight > 0)
     .map((allocation) => {
@@ -39,14 +41,14 @@ export function AnnualReturnWidget() {
       const amountUsd = currentEthAmount * (allocation.weight / 100)
       const amountEth = ethPrice > 0 ? amountUsd / ethPrice : 0
       const yieldEth = amountEth * (product.apy / 100)
-      const yieldUsd = yieldEth * ethPrice // Convert to USD at current price
+      const yieldUsdAtCurrentPrice = yieldEth * ethPrice
       return {
         name: product.name,
         amountUsd,
         amountEth,
         apy: product.apy,
         yieldEth,
-        yieldUsd,
+        yieldUsdAtCurrentPrice,
       }
     })
     .filter(Boolean)
@@ -107,15 +109,26 @@ export function AnnualReturnWidget() {
 
   // Total yields
   const totalEthYieldEth = ethProductReturns.reduce((sum, p) => sum + (p?.yieldEth ?? 0), 0)
-  const totalEthYieldUsd = ethProductReturns.reduce((sum, p) => sum + (p?.yieldUsd ?? 0), 0)
+  const totalEthYieldUsdAtCurrentPrice = ethProductReturns.reduce((sum, p) => sum + (p?.yieldUsdAtCurrentPrice ?? 0), 0)
   const totalStableYieldUsd = stablecoinProductReturns.reduce((sum, p) => sum + (p?.yieldUsd ?? 0), 0)
 
-  // Net annual return (yield only, no price impact)
-  const netAnnualReturn = totalEthYieldUsd + totalStableYieldUsd + totalLeverageNetYield
+  // Price impact calculations
+  const principalPriceImpact = currentEthAmount * (priceChangeScenario / 100)
+  const yieldPriceImpact = totalEthYieldEth * (projectedEthPrice - ethPrice)
+  const totalPriceImpact = principalPriceImpact + yieldPriceImpact
+
+  // Total return (yield + price impact)
+  const totalReturn = totalEthYieldUsdAtCurrentPrice + totalStableYieldUsd + totalLeverageNetYield + totalPriceImpact
 
   // Daily and monthly
-  const dailyReturn = netAnnualReturn / 365
-  const monthlyReturn = netAnnualReturn / 12
+  const dailyReturn = totalReturn / 365
+  const monthlyReturn = totalReturn / 12
+
+  // Calculate as percentage of total position
+  const totalPosition = currentEthAmount + currentStableAmount + totalBorrowed
+  const totalReturnPercent = totalPosition > 0 ? (totalReturn / totalPosition) * 100 : 0
+
+  const isPositive = totalReturn >= 0
 
   const formatUsd = (amount: number): string => {
     if (Math.abs(amount) >= 1000000) {
@@ -151,12 +164,19 @@ export function AnnualReturnWidget() {
   }
 
   return (
-    <Card title="Annual Yield" subtitle="Yield only (excl. price change)" className="h-full">
+    <Card
+      title="Total Return"
+      subtitle="Annual"
+      className={`border-l-4 ${isPositive ? 'border-l-green-500' : 'border-l-red-500'} h-full`}
+    >
       <div className="space-y-4">
         {/* Main Return Display */}
         <div>
-          <span className="text-4xl font-bold text-gray-900">
-            {formatUsd(netAnnualReturn)}
+          <span className={`text-3xl font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            {isPositive ? '+' : ''}{formatUsd(totalReturn)}
+          </span>
+          <span className={`text-lg font-medium text-gray-500 ml-2`}>
+            ({isPositive ? '+' : ''}{totalReturnPercent.toFixed(2)}%)
           </span>
           <p className="text-sm text-gray-500 mt-1">
             Daily {formatCompact(dailyReturn)} · Monthly {formatCompact(monthlyReturn)}
@@ -173,7 +193,7 @@ export function AnnualReturnWidget() {
 
         {/* Breakdown Table */}
         <div className="pt-3 border-t border-gray-100 space-y-3 text-sm">
-          {/* ETH Exposure - yields shown in ETH first, then USD */}
+          {/* ETH Yield - shown in ETH first, then USD at current price */}
           {ethProductReturns.length > 0 && (
             <div>
               <p className="text-xs font-medium text-gray-500 mb-1">ETH Yield</p>
@@ -183,7 +203,7 @@ export function AnnualReturnWidget() {
                   <span className="text-gray-900 tabular-nums">
                     <span className="text-purple-600 font-medium">{formatEth(p?.yieldEth ?? 0)}</span>
                     <span className="text-gray-400 mx-1">→</span>
-                    <span className="font-medium">{formatCompact(p?.yieldUsd ?? 0)}</span>
+                    <span className="font-medium">{formatCompact(p?.yieldUsdAtCurrentPrice ?? 0)}</span>
                   </span>
                 </div>
               ))}
@@ -193,14 +213,43 @@ export function AnnualReturnWidget() {
                   <span className="text-gray-700 tabular-nums">
                     <span className="text-purple-500">{formatEth(totalEthYieldEth)}</span>
                     <span className="text-gray-400 mx-1">→</span>
-                    <span>{formatCompact(totalEthYieldUsd)}</span>
+                    <span>{formatCompact(totalEthYieldUsdAtCurrentPrice)}</span>
                   </span>
                 </div>
               )}
             </div>
           )}
 
-          {/* Stablecoin Exposure */}
+          {/* Price Impact */}
+          {priceChangeScenario !== 0 && currentEthAmount > 0 && (
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                ETH Price ({priceChangeScenario >= 0 ? '+' : ''}{priceChangeScenario}%)
+              </p>
+              <div className="flex justify-between py-0.5">
+                <span className="text-gray-600">Principal</span>
+                <span className={`font-medium tabular-nums ${principalPriceImpact >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {principalPriceImpact >= 0 ? '+' : ''}{formatCompact(principalPriceImpact)}
+                </span>
+              </div>
+              {totalEthYieldEth > 0 && (
+                <div className="flex justify-between py-0.5">
+                  <span className="text-gray-600">Yield</span>
+                  <span className={`font-medium tabular-nums ${yieldPriceImpact >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {yieldPriceImpact >= 0 ? '+' : ''}{formatCompact(yieldPriceImpact)}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between py-0.5 text-xs border-t border-gray-50 mt-1 pt-1">
+                <span className="text-gray-500">Subtotal</span>
+                <span className={`tabular-nums ${totalPriceImpact >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalPriceImpact >= 0 ? '+' : ''}{formatCompact(totalPriceImpact)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Stablecoin Yield */}
           {stablecoinProductReturns.length > 0 && (
             <div>
               <p className="text-xs font-medium text-gray-500 mb-1">USD Yield</p>
@@ -253,9 +302,9 @@ export function AnnualReturnWidget() {
           {/* Net Total */}
           <div className="pt-2 border-t border-gray-200">
             <div className="flex justify-between font-medium">
-              <span className="text-gray-900">Total Yield</span>
-              <span className="text-gray-900 tabular-nums">
-                {formatCompact(netAnnualReturn)}
+              <span className="text-gray-900">Total Return</span>
+              <span className={`tabular-nums ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                {isPositive ? '+' : ''}{formatCompact(totalReturn)}
               </span>
             </div>
           </div>
