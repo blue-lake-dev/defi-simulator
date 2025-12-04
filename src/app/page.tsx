@@ -2,6 +2,7 @@ import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
 import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
 import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAllocationWidget'
+import { ApyWidget } from '@/components/widgets/ApyWidget'
 
 export default function Home() {
   return (
@@ -30,11 +31,9 @@ export default function Home() {
             <PortfolioSetupWidget />
           </div>
 
-          {/* APY Widget placeholder */}
+          {/* APY Widget */}
           <div className="md:col-span-2 lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
-              APY Widget
-            </div>
+            <ApyWidget />
           </div>
 
           {/* ETH Price */}

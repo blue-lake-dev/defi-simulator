@@ -18,7 +18,7 @@ export function PortfolioSetupWidget() {
   } = usePortfolioStore()
 
   return (
-    <Card title="Portfolio Setup">
+    <Card title="Portfolio Setup" className="h-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Investment */}
         <div>
