@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { useEffect, useState } from 'react'
 import type {
   EthAllocation,
   StablecoinAllocation,
@@ -184,3 +185,26 @@ export const usePortfolioStore = create<PortfolioStore>()(
     }
   )
 )
+
+// Hook to check if the store has been hydrated from sessionStorage
+export const useHydration = () => {
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    // Wait for Zustand persist to rehydrate
+    const unsubFinishHydration = usePortfolioStore.persist.onFinishHydration(() => {
+      setHydrated(true)
+    })
+
+    // Check if already hydrated
+    if (usePortfolioStore.persist.hasHydrated()) {
+      setHydrated(true)
+    }
+
+    return () => {
+      unsubFinishHydration()
+    }
+  }, [])
+
+  return hydrated
+}
