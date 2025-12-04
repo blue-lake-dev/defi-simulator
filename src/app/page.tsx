@@ -1,6 +1,7 @@
 import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
 import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
+import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAllocationWidget'
 
 export default function Home() {
   return (
@@ -51,6 +52,11 @@ export default function Home() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
               Total Return Widget
             </div>
+          </div>
+
+          {/* Stablecoin Allocation - spans 2 columns on desktop */}
+          <div className="md:col-span-2 lg:col-span-2">
+            <StablecoinAllocationWidget />
           </div>
         </div>
       </main>

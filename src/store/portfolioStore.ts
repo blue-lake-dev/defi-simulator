@@ -43,6 +43,7 @@ interface PortfolioStore {
 
   // Actions - Stablecoin Allocations
   setStablecoinAllocations: (allocations: StablecoinAllocation[]) => void
+  toggleStablecoinAllocation: (productId: string) => void
   updateStablecoinAllocationWeight: (productId: string, weight: number) => void
   setLeveragedStablecoinAllocations: (allocations: LeveragedStablecoinAllocation[]) => void
 }
@@ -121,6 +122,13 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
 
   // Actions - Stablecoin Allocations
   setStablecoinAllocations: (allocations) => set({ stablecoinAllocations: allocations }),
+
+  toggleStablecoinAllocation: (productId) =>
+    set((state) => ({
+      stablecoinAllocations: state.stablecoinAllocations.map((a) =>
+        a.productId === productId ? { ...a, selected: !a.selected, weight: !a.selected ? 0 : a.weight } : a
+      ),
+    })),
 
   updateStablecoinAllocationWeight: (productId, weight) =>
     set((state) => ({

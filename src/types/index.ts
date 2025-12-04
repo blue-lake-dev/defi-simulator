@@ -54,6 +54,7 @@ export interface StablecoinProduct {
 
 export interface StablecoinAllocation {
   productId: string
+  selected: boolean
   weight: number // 0-100 (base allocation)
 }
 
