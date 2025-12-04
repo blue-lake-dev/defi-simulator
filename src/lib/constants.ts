@@ -62,15 +62,6 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     poolId: 'aa70268e-4b52-42bf-a116-608b370f9501',
   },
   {
-    id: 'aave-usdt',
-    protocol: 'Aave V3',
-    name: 'USDT',
-    apy: 4.3,
-    risk: 'Low',
-    yieldType: 'USD',
-    poolId: 'f981a304-bb6c-45b8-b0c5-fd2f515ad23a',
-  },
-  {
     id: 'morpho-steakusdc',
     protocol: 'Morpho',
     name: 'steakUSDC',
@@ -101,16 +92,6 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     poolFilter: { project: 'morpho-v1', symbol: 'BBQUSDC' },
   },
   {
-    id: 'morpho-steakusdt',
-    protocol: 'Morpho',
-    name: 'steakUSDT',
-    apy: 6.2,
-    apyRange: [4.6, 7.8],
-    risk: 'Low',
-    yieldType: 'USD',
-    poolFilter: { project: 'morpho-v1', symbol: 'STEAKUSDT' },
-  },
-  {
     id: 'ethena-susde',
     protocol: 'Ethena',
     name: 'sUSDe',
@@ -127,15 +108,6 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     risk: 'Medium',
     yieldType: 'USD',
     poolId: '43641cf5-a92e-416b-bce9-27113d3c0db6',
-  },
-  {
-    id: 'maple-usdt',
-    protocol: 'Maple',
-    name: 'Syrup USDT',
-    apy: 6.2,
-    risk: 'Medium',
-    yieldType: 'USD',
-    poolId: '8edfdf02-cdbb-43f7-bca6-954e5fe56813',
   },
   {
     id: 'pendle-pt-susde',
@@ -164,10 +136,6 @@ export const BORROW_OPTIONS: BorrowOption[] = [
     borrowRate: 5.5,
   },
   {
-    asset: 'USDT',
-    borrowRate: 6.0,
-  },
-  {
     asset: 'USDS',
     borrowRate: 4.5,
   },
@@ -191,13 +159,13 @@ export function getCollateralParams(productId: string): CollateralParams | null 
 }
 
 // Helper to get borrow rate by asset (fallback only - use useApyStore for live rates)
-export function getBorrowRate(asset: 'USDC' | 'USDT' | 'USDS'): number {
+export function getBorrowRate(asset: 'USDC' | 'USDS'): number {
   const option = BORROW_OPTIONS.find((o) => o.asset === asset)
   return option?.borrowRate ?? 5.5
 }
 
 // Helper to get fallback borrow rate
-export function getFallbackBorrowRate(asset: 'USDC' | 'USDT' | 'USDS'): number {
+export function getFallbackBorrowRate(asset: 'USDC' | 'USDS'): number {
   const option = BORROW_OPTIONS.find((o) => o.asset === asset)
   return option?.borrowRate ?? 5.5
 }

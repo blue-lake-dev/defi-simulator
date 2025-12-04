@@ -33,15 +33,12 @@ export function LeverageConfigModal({
 
   // Get live borrow rates
   const usdcBorrowRate = useLiveBorrowRate('USDC')
-  const usdtBorrowRate = useLiveBorrowRate('USDT')
   const usdsBorrowRate = useLiveBorrowRate('USDS')
 
-  const getLiveBorrowRate = (asset: 'USDC' | 'USDT' | 'USDS'): number => {
+  const getLiveBorrowRate = (asset: 'USDC' | 'USDS'): number => {
     switch (asset) {
       case 'USDC':
         return usdcBorrowRate
-      case 'USDT':
-        return usdtBorrowRate
       case 'USDS':
         return usdsBorrowRate
     }
@@ -50,8 +47,8 @@ export function LeverageConfigModal({
   // Local state for form
   const [collateralPercent, setCollateralPercent] = useState(50)
   const [ltv, setLtv] = useState(60)
-  const [borrowAsset, setBorrowAsset] = useState<'USDC' | 'USDT' | 'USDS'>('USDC')
-  const [deployTargetId, setDeployTargetId] = useState('maple-syrup-usdc')
+  const [borrowAsset, setBorrowAsset] = useState<'USDC' | 'USDS'>('USDC')
+  const [deployTargetId, setDeployTargetId] = useState('maple-usdc')
 
   // Initialize from current config when modal opens
   useEffect(() => {
@@ -65,7 +62,7 @@ export function LeverageConfigModal({
       setCollateralPercent(50)
       setLtv(60)
       setBorrowAsset('USDC')
-      setDeployTargetId('maple-syrup-usdc')
+      setDeployTargetId('maple-usdc')
     }
   }, [isOpen, currentConfig])
 

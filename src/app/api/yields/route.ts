@@ -20,10 +20,8 @@ const POOL_IDS: Record<string, string> = {
   'etherfi-weeth': '46bd2bdf-6d92-4066-b482-e885ee172264',
   // Stablecoin Products
   'aave-usdc': 'aa70268e-4b52-42bf-a116-608b370f9501',
-  'aave-usdt': 'f981a304-bb6c-45b8-b0c5-fd2f515ad23a',
   'ethena-susde': '66985a81-9c51-46ca-9977-42b4fe7bc6df',
   'maple-usdc': '43641cf5-a92e-416b-bce9-27113d3c0db6',
-  'maple-usdt': '8edfdf02-cdbb-43f7-bca6-954e5fe56813',
 }
 
 // Pool filters for pools that need to be found by criteria
@@ -35,14 +33,13 @@ const POOL_FILTERS: Record<string, { project: string; symbol: string; pickHighes
   'morpho-steakusdc': { project: 'morpho-v1', symbol: 'STEAKUSDC', pickHighest: true },
   'morpho-gtusdc': { project: 'morpho-v1', symbol: 'GTUSDC', pickHighest: true },
   'morpho-bbqusdc': { project: 'morpho-v1', symbol: 'BBQUSDC', pickHighest: true },
-  'morpho-steakusdt': { project: 'morpho-v1', symbol: 'STEAKUSDT', pickHighest: true },
   // Pendle stablecoin PTs
   'pendle-pt-susde': { project: 'pendle', symbol: 'SUSDE', pickHighest: false },
   'pendle-pt-syrupusdc': { project: 'pendle', symbol: 'SYRUPUSDC', pickHighest: false },
 }
 
 // Borrow assets we track
-const BORROW_ASSETS = ['USDC', 'USDT', 'USDS']
+const BORROW_ASSETS = ['USDC', 'USDS']
 
 function isCacheValid(): boolean {
   if (!cachedData) return false
