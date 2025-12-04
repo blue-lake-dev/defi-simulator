@@ -1,4 +1,5 @@
 import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
+import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Widget Grid - will expand as we add more widgets */}
         <div className="grid grid-cols-4 gap-5">
+          {/* Row 1 */}
           {/* Portfolio Setup - spans 3 columns */}
           <div className="col-span-3">
             <PortfolioSetupWidget />
@@ -31,6 +33,26 @@ export default function Home() {
           <div className="col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
               APY Widget
+            </div>
+          </div>
+
+          {/* Row 2 */}
+          {/* ETH Price - 1 column */}
+          <div className="col-span-1">
+            <EthPriceWidget />
+          </div>
+
+          {/* Placeholder for ETH Allocation - 2 columns */}
+          <div className="col-span-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
+              ETH Allocation Widget
+            </div>
+          </div>
+
+          {/* Placeholder for Total Return - 1 column */}
+          <div className="col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
+              Total Return Widget
             </div>
           </div>
         </div>
