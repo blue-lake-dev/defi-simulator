@@ -6,6 +6,7 @@ import { ApyWidget } from '@/components/widgets/ApyWidget'
 import { HealthFactorWidget } from '@/components/widgets/HealthFactorWidget'
 import { LiquidationPriceWidget } from '@/components/widgets/LiquidationPriceWidget'
 import { TotalReturnWidget } from '@/components/widgets/TotalReturnWidget'
+import { AnnualReturnWidget } from '@/components/widgets/AnnualReturnWidget'
 
 export default function Home() {
   return (
@@ -61,9 +62,7 @@ export default function Home() {
             <StablecoinAllocationWidget />
           </div>
           <div className="md:col-span-1 lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
-              Annual Return Widget
-            </div>
+            <AnnualReturnWidget />
           </div>
         </div>
       </main>

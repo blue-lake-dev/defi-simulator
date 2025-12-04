@@ -86,7 +86,7 @@ export function TotalReturnWidget() {
         <span className={`text-2xl font-medium ${isValid ? (isPositive ? 'text-green-600' : 'text-red-600') : 'text-gray-400'}`}>
           %
         </span>
-        {isValid && priceChangeScenario !== 0 && (
+        {isValid && (
           <p className="text-sm text-gray-500 mt-2">
             incl. {priceChangeScenario >= 0 ? '+' : ''}{priceChangeScenario}% ETH
           </p>
