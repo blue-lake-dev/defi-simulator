@@ -59,7 +59,7 @@ export function StablecoinAllocationWidget() {
     <Card
       title="Stablecoin Allocation"
       subtitle={`${formatAmount(baseAmount)} base${borrowedTotal > 0 ? ` + ${formatAmount(borrowedTotal)} leveraged` : ''} · Must total 100%`}
-      className="flex flex-col max-h-[500px]"
+      className="flex flex-col h-full min-h-[400px]"
       contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
     >
       {/* Header Row - visible on lg screens */}

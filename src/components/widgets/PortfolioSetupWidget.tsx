@@ -14,6 +14,7 @@ export function PortfolioSetupWidget() {
     setEthRatio,
     ethAmount,
     stablecoinAmount,
+    hedgeConfig,
   } = usePortfolioStore()
 
   return (
@@ -44,6 +45,8 @@ export function PortfolioSetupWidget() {
             leftAmount={ethAmount()}
             rightAmount={stablecoinAmount()}
             ethPrice={ethPrice}
+            hedgePercent={hedgeConfig.enabled ? hedgeConfig.allocationPercent : 0}
+            hedgeLabel="Hedge"
           />
         </div>
       </div>

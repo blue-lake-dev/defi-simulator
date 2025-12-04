@@ -52,6 +52,9 @@ interface AllocationSliderProps {
   leftAmount?: number
   rightAmount?: number
   ethPrice?: number // ETH price for converting left amount to ETH
+  max?: number // Maximum value (default 100)
+  hedgePercent?: number // Hedge percentage of stablecoin portion (0-100)
+  hedgeLabel?: string
 }
 
 export function AllocationSlider({
@@ -62,6 +65,9 @@ export function AllocationSlider({
   leftAmount,
   rightAmount,
   ethPrice,
+  max = 100,
+  hedgePercent = 0,
+  hedgeLabel = 'Hedge',
 }: AllocationSliderProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(parseFloat(e.target.value))
@@ -90,6 +96,12 @@ export function AllocationSlider({
   // Calculate ETH amount from USD
   const ethAmount = (leftAmount && ethPrice && ethPrice > 0) ? leftAmount / ethPrice : 0
 
+  // Calculate the visual widths for the three segments
+  // Hedge is a portion of the stablecoin section
+  const stablecoinWidth = 100 - value
+  const hedgeWidth = stablecoinWidth * (hedgePercent / 100)
+  const pureStableWidth = stablecoinWidth - hedgeWidth
+
   return (
     <div className="w-full">
       {/* Slider Track */}
@@ -102,15 +114,21 @@ export function AllocationSlider({
           />
           <div
             className="h-full bg-gray-300 transition-all duration-150"
-            style={{ width: `${100 - value}%` }}
+            style={{ width: `${pureStableWidth}%` }}
           />
+          {hedgePercent > 0 && (
+            <div
+              className="h-full bg-blue-500 transition-all duration-150"
+              style={{ width: `${hedgeWidth}%` }}
+            />
+          )}
         </div>
 
         {/* Range input (invisible, for interaction) */}
         <input
           type="range"
           min={0}
-          max={100}
+          max={max}
           step={1}
           value={value}
           onChange={handleChange}
@@ -125,12 +143,16 @@ export function AllocationSlider({
       </div>
 
       {/* Labels */}
-      <div className="flex justify-between items-center text-sm">
-        <div>
-          <span className="font-medium text-gray-900">{value}% {leftLabel}</span>
-          <span className="text-gray-400 mx-2">·</span>
-          <span className="font-medium text-gray-900">{100 - value}% {rightLabel}</span>
-        </div>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+        <span className="font-medium text-purple-900">{value}% {leftLabel}</span>
+        <span className="text-gray-400">·</span>
+        <span className="font-medium text-gray-600">{Math.round(stablecoinWidth - hedgeWidth)}% {rightLabel}</span>
+        {hedgePercent > 0 && (
+          <>
+            <span className="text-gray-400">·</span>
+            <span className="font-medium text-blue-600">{Math.round(hedgeWidth)}% {hedgeLabel}</span>
+          </>
+        )}
       </div>
 
       {/* Amounts */}

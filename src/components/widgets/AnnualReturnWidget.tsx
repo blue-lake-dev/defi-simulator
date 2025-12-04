@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
+import { useHyperliquid, FALLBACK_FUNDING_RATE } from '@/hooks/useHyperliquid'
 
 export function AnnualReturnWidget() {
   const {
@@ -14,6 +15,9 @@ export function AnnualReturnWidget() {
     ethAmount,
     stablecoinAmount,
     totalBorrowedAmount,
+    hedgeConfig,
+    hedgePositionSize,
+    hedgeCollateral,
   } = usePortfolioStore()
 
   // Get live APY data
@@ -22,6 +26,10 @@ export function AnnualReturnWidget() {
   // Get live borrow rates
   const usdcBorrowRate = useLiveBorrowRate('USDC')
   const usdeBorrowRate = useLiveBorrowRate('USDe')
+
+  // Get Hyperliquid funding rate
+  const { data: hlData } = useHyperliquid()
+  const fundingRate = hlData?.fundingRate ?? FALLBACK_FUNDING_RATE
 
   const getLiveBorrowRate = (asset: 'USDC' | 'USDe'): number => {
     switch (asset) {
@@ -126,6 +134,17 @@ export function AnnualReturnWidget() {
   const totalLeverageGrossYield = leverageDetails.reduce((sum, d) => sum + (d?.grossYield ?? 0), 0)
   const totalLeverageNetYield = leverageDetails.reduce((sum, d) => sum + (d?.netYield ?? 0), 0)
 
+  // Hedge calculations
+  const hedgePosition = hedgePositionSize()
+  const hedgeCollateralAmount = hedgeCollateral()
+  const hasHedge = hedgeConfig.enabled && hedgePosition > 0
+
+  // Hedge funding PnL (positive rate = shorts receive)
+  const hedgeFundingPnl = hasHedge ? hedgePosition * (fundingRate / 100) : 0
+
+  // Hedge price PnL (shorts gain when price drops)
+  const hedgePricePnl = hasHedge ? hedgePosition * (-priceChangeScenario / 100) : 0
+
   // Total yields
   const totalEthYieldEth = ethProductReturns.reduce((sum, p) => sum + (p?.yieldEth ?? 0), 0)
   const totalEthYieldUsdAtCurrentPrice = ethProductReturns.reduce((sum, p) => sum + (p?.yieldUsdAtCurrentPrice ?? 0), 0)
@@ -136,8 +155,11 @@ export function AnnualReturnWidget() {
   const yieldPriceImpact = totalEthYieldEth * (projectedEthPrice - ethPrice)
   const totalPriceImpact = principalPriceImpact + yieldPriceImpact
 
-  // Total return (yield + price impact)
-  const totalReturn = totalEthYieldUsdAtCurrentPrice + totalStableYieldUsd + totalLeverageNetYield + totalPriceImpact
+  // Total hedge return
+  const totalHedgeReturn = hedgeFundingPnl + hedgePricePnl
+
+  // Total return (yield + price impact + leverage + hedge)
+  const totalReturn = totalEthYieldUsdAtCurrentPrice + totalStableYieldUsd + totalLeverageNetYield + totalPriceImpact + totalHedgeReturn
 
   // Daily and monthly
   const dailyReturn = totalReturn / 365
@@ -314,6 +336,33 @@ export function AnnualReturnWidget() {
                 <span className="text-gray-500">Net leverage</span>
                 <span className={`tabular-nums ${totalLeverageNetYield >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {totalLeverageNetYield >= 0 ? '+' : ''}{formatCompact(totalLeverageNetYield)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ETH Hedge */}
+          {hasHedge && (
+            <div>
+              <p className="text-xs font-medium text-blue-600 mb-1">ETH Short Hedge</p>
+              <div className="flex justify-between py-0.5">
+                <span className="text-gray-600">Funding ({fundingRate >= 0 ? '+' : ''}{fundingRate.toFixed(2)}%)</span>
+                <span className={`tabular-nums font-medium ${hedgeFundingPnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {hedgeFundingPnl >= 0 ? '+' : ''}{formatCompact(hedgeFundingPnl)}
+                </span>
+              </div>
+              {priceChangeScenario !== 0 && (
+                <div className="flex justify-between py-0.5">
+                  <span className="text-gray-600">Price hedge ({priceChangeScenario >= 0 ? '+' : ''}{priceChangeScenario}%)</span>
+                  <span className={`tabular-nums font-medium ${hedgePricePnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {hedgePricePnl >= 0 ? '+' : ''}{formatCompact(hedgePricePnl)}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between py-0.5 text-xs border-t border-gray-50 mt-1 pt-1">
+                <span className="text-gray-500">Net hedge</span>
+                <span className={`tabular-nums ${totalHedgeReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalHedgeReturn >= 0 ? '+' : ''}{formatCompact(totalHedgeReturn)}
                 </span>
               </div>
             </div>

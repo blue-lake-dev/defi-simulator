@@ -6,6 +6,7 @@ import type {
   StablecoinAllocation,
   LeveragedStablecoinAllocation,
   LeverageConfig,
+  HedgeConfig,
 } from '@/types'
 import { ETH_PRODUCTS, STABLECOIN_PRODUCTS } from '@/lib/constants'
 
@@ -26,10 +27,14 @@ interface PortfolioStore {
   // Portfolio Setup
   investmentAmount: number
   ethRatio: number
+  investmentPeriod: number // years
 
   // ETH Price & Scenario
   ethPrice: number
   priceChangeScenario: number
+
+  // ETH Short Hedge (Hyperliquid)
+  hedgeConfig: HedgeConfig
 
   // Allocations
   ethAllocations: EthAllocation[]
@@ -40,14 +45,23 @@ interface PortfolioStore {
   ethAmount: () => number
   stablecoinAmount: () => number
   totalBorrowedAmount: () => number
+  hedgeCollateral: () => number // Collateral used for hedge position
+  hedgePositionSize: () => number // Total short position size
 
   // Actions - Portfolio Setup
   setInvestmentAmount: (amount: number) => void
   setEthRatio: (ratio: number) => void
+  setInvestmentPeriod: (years: number) => void
 
   // Actions - ETH Price
   setEthPrice: (price: number) => void
   setPriceChangeScenario: (percent: number) => void
+
+  // Actions - Hedge
+  setHedgeConfig: (config: HedgeConfig) => void
+  toggleHedge: () => void
+  setHedgeAllocation: (percent: number) => void
+  setHedgeLeverage: (leverage: number) => void
 
   // Actions - ETH Allocations
   setEthAllocations: (allocations: EthAllocation[]) => void
@@ -71,10 +85,18 @@ export const usePortfolioStore = create<PortfolioStore>()(
       // Initial state - Portfolio Setup
       investmentAmount: 1000000,
       ethRatio: 40,
+      investmentPeriod: 1,
 
       // Initial state - ETH Price
       ethPrice: 3500,
       priceChangeScenario: 5,
+
+      // Initial state - Hedge
+      hedgeConfig: {
+        enabled: false,
+        allocationPercent: 10,
+        leverage: 5,
+      },
 
       // Initial state - Allocations
       ethAllocations: initialEthAllocations,
@@ -82,14 +104,21 @@ export const usePortfolioStore = create<PortfolioStore>()(
       leveragedStablecoinAllocations: [],
 
       // Computed values
+      // ETH allocation is ethRatio% of total investment
       ethAmount: () => {
         const { investmentAmount, ethRatio } = get()
         return investmentAmount * (ethRatio / 100)
       },
 
+      // Stablecoin allocation: (100 - ethRatio)% minus hedge portion
+      // Hedge is taken from the stablecoin portion
       stablecoinAmount: () => {
-        const { investmentAmount, ethRatio } = get()
-        return investmentAmount * ((100 - ethRatio) / 100)
+        const { investmentAmount, ethRatio, hedgeConfig } = get()
+        const stableTotal = investmentAmount * ((100 - ethRatio) / 100)
+        const hedgeAmount = hedgeConfig.enabled
+          ? stableTotal * (hedgeConfig.allocationPercent / 100)
+          : 0
+        return stableTotal - hedgeAmount
       },
 
       totalBorrowedAmount: () => {
@@ -105,13 +134,43 @@ export const usePortfolioStore = create<PortfolioStore>()(
         }, 0)
       },
 
+      hedgeCollateral: () => {
+        const { investmentAmount, ethRatio, hedgeConfig } = get()
+        if (!hedgeConfig.enabled) return 0
+        // Hedge is taken from stablecoin portion
+        const stableTotal = investmentAmount * ((100 - ethRatio) / 100)
+        return stableTotal * (hedgeConfig.allocationPercent / 100)
+      },
+
+      hedgePositionSize: () => {
+        const { hedgeCollateral, hedgeConfig } = get()
+        if (!hedgeConfig.enabled) return 0
+        return hedgeCollateral() * hedgeConfig.leverage
+      },
+
       // Actions - Portfolio Setup
       setInvestmentAmount: (amount) => set({ investmentAmount: amount }),
       setEthRatio: (ratio) => set({ ethRatio: ratio }),
+      setInvestmentPeriod: (years) => set({ investmentPeriod: years }),
 
       // Actions - ETH Price
       setEthPrice: (price) => set({ ethPrice: price }),
       setPriceChangeScenario: (percent) => set({ priceChangeScenario: percent }),
+
+      // Actions - Hedge
+      setHedgeConfig: (config) => set({ hedgeConfig: config }),
+      toggleHedge: () =>
+        set((state) => ({
+          hedgeConfig: { ...state.hedgeConfig, enabled: !state.hedgeConfig.enabled },
+        })),
+      setHedgeAllocation: (percent) =>
+        set((state) => ({
+          hedgeConfig: { ...state.hedgeConfig, allocationPercent: percent },
+        })),
+      setHedgeLeverage: (leverage) =>
+        set((state) => ({
+          hedgeConfig: { ...state.hedgeConfig, leverage },
+        })),
 
       // Actions - ETH Allocations
       setEthAllocations: (allocations) => set({ ethAllocations: allocations }),
@@ -162,8 +221,14 @@ export const usePortfolioStore = create<PortfolioStore>()(
         set({
           investmentAmount: 1000000,
           ethRatio: 40,
+          investmentPeriod: 1,
           ethPrice: 3500,
           priceChangeScenario: 5,
+          hedgeConfig: {
+            enabled: false,
+            allocationPercent: 10,
+            leverage: 5,
+          },
           ethAllocations: initialEthAllocations,
           stablecoinAllocations: initialStablecoinAllocations,
           leveragedStablecoinAllocations: [],
@@ -176,8 +241,10 @@ export const usePortfolioStore = create<PortfolioStore>()(
         // Only persist data, not computed functions
         investmentAmount: state.investmentAmount,
         ethRatio: state.ethRatio,
+        investmentPeriod: state.investmentPeriod,
         ethPrice: state.ethPrice,
         priceChangeScenario: state.priceChangeScenario,
+        hedgeConfig: state.hedgeConfig,
         ethAllocations: state.ethAllocations,
         stablecoinAllocations: state.stablecoinAllocations,
         leveragedStablecoinAllocations: state.leveragedStablecoinAllocations,

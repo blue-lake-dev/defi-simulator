@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
+import { useHyperliquid, FALLBACK_FUNDING_RATE } from '@/hooks/useHyperliquid'
 
 export function ExpectedBalanceWidget() {
   const {
@@ -13,6 +14,10 @@ export function ExpectedBalanceWidget() {
     ethAmount,
     stablecoinAmount,
     totalBorrowedAmount,
+    hedgeConfig,
+    hedgePositionSize,
+    hedgeCollateral,
+    investmentPeriod,
   } = usePortfolioStore()
 
   // Get live APY data
@@ -21,6 +26,10 @@ export function ExpectedBalanceWidget() {
   // Get live borrow rates
   const usdcBorrowRate = useLiveBorrowRate('USDC')
   const usdeBorrowRate = useLiveBorrowRate('USDe')
+
+  // Get Hyperliquid funding rate
+  const { data: hlData } = useHyperliquid()
+  const fundingRate = hlData?.fundingRate ?? FALLBACK_FUNDING_RATE
 
   const getLiveBorrowRate = (asset: 'USDC' | 'USDe'): number => {
     switch (asset) {
@@ -85,8 +94,25 @@ export function ExpectedBalanceWidget() {
     return sum
   }, 0)
 
+  // Hedge calculations
+  const hedgePosition = hedgePositionSize()
+  const hedgeCollateralAmount = hedgeCollateral()
+  const hasHedge = hedgeConfig.enabled && hedgePosition > 0
+
+  // Hedge funding PnL (positive rate = shorts receive)
+  const hedgeFundingPnl = hasHedge ? hedgePosition * (fundingRate / 100) : 0
+
+  // Hedge price PnL (shorts gain when price drops)
+  const hedgePricePnl = hasHedge ? hedgePosition * (-priceChangeScenario / 100) : 0
+
+  // Total hedge return
+  const totalHedgeReturn = hedgeFundingPnl + hedgePricePnl
+
   // Final stablecoin balance (principal + yield + leverage net yield)
   const finalStablecoinBalance = currentStableAmount + stablecoinYieldUsd + leverageNetYield
+
+  // Final hedge balance (collateral + returns)
+  const finalHedgeBalance = hasHedge ? hedgeCollateralAmount + totalHedgeReturn : 0
 
   // Starting balances for comparison
   const startingEthBalance = ethPositionInEth
@@ -161,12 +187,29 @@ export function ExpectedBalanceWidget() {
           )}
         </div>
 
+        {/* Hedge Balance */}
+        {hasHedge && (
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="text-xs font-medium text-blue-600 mb-1">ETH Short Hedge</div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-gray-900">
+                {formatUsd(finalHedgeBalance)}
+              </span>
+            </div>
+            {totalHedgeReturn !== 0 && (
+              <div className={`text-xs mt-1 ${totalHedgeReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {totalHedgeReturn >= 0 ? '+' : ''}{formatUsd(totalHedgeReturn)} from hedge
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Combined Total */}
         <div className="pt-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-gray-600">Combined Value</span>
             <span className="text-lg font-bold text-gray-900">
-              {formatUsd(finalEthBalanceUsd + finalStablecoinBalance)}
+              {formatUsd(finalEthBalanceUsd + finalStablecoinBalance + finalHedgeBalance)}
             </span>
           </div>
         </div>

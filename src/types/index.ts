@@ -84,6 +84,41 @@ export interface BorrowOption {
   borrowRate: number
 }
 
+// ETH Short Hedge Configuration (Hyperliquid)
+export interface HedgeConfig {
+  enabled: boolean
+  allocationPercent: number // % of total investment allocated to hedge
+  leverage: number // 1-25x
+}
+
+// Hyperliquid API Response Types
+export interface HyperliquidAssetCtx {
+  funding: string // hourly funding rate as string
+  openInterest: string
+  prevDayPx: string
+  dayNtlVlm: string
+  premium: string
+  oraclePx: string
+  markPx: string
+  midPx: string
+  impactPxs: [string, string]
+  dayBaseVlm: string
+}
+
+export interface HyperliquidMeta {
+  universe: Array<{
+    szDecimals: number
+    name: string
+    maxLeverage: number
+    marginTableId: number
+  }>
+}
+
+export interface HyperliquidMetaAndAssetCtxs {
+  0: HyperliquidMeta
+  1: HyperliquidAssetCtx[]
+}
+
 // Collateral Parameters (Aave V3)
 export interface CollateralParams {
   maxLtv: number

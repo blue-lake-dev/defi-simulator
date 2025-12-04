@@ -5,8 +5,8 @@ import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
 import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAllocationWidget'
 import { ApyWidget } from '@/components/widgets/ApyWidget'
-import { HealthFactorWidget } from '@/components/widgets/HealthFactorWidget'
-import { LiquidationPriceWidget } from '@/components/widgets/LiquidationPriceWidget'
+import { EthHedgeWidget } from '@/components/widgets/EthHedgeWidget'
+import { LeverageRiskMetricsWidget } from '@/components/widgets/LeverageRiskMetricsWidget'
 import { AnnualReturnWidget } from '@/components/widgets/AnnualReturnWidget'
 import { ExpectedBalanceWidget } from '@/components/widgets/ExpectedBalanceWidget'
 
@@ -39,14 +39,10 @@ export default function Home() {
               <AnnualReturnWidget />
             </div>
 
-            {/* Row 3: Health Factor/Liquidation stacked + Stablecoin Allocation + Expected Balance */}
+            {/* Row 3: Risk Metrics + ETH Hedge stacked | Stablecoin Allocation | Expected Balance */}
             <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4 sm:gap-5">
-              <div className="flex-1">
-                <HealthFactorWidget />
-              </div>
-              <div className="flex-1">
-                <LiquidationPriceWidget />
-              </div>
+              <LeverageRiskMetricsWidget />
+              <EthHedgeWidget />
             </div>
             <div className="md:col-span-2 lg:col-span-2">
               <StablecoinAllocationWidget />
