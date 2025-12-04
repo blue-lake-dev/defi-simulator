@@ -1,15 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { STABLECOIN_PRODUCTS } from '@/lib/constants'
-import type { StablecoinAllocation } from '@/types'
 
 export function StablecoinAllocationWidget() {
   const {
     stablecoinAllocations,
-    setStablecoinAllocations,
     toggleStablecoinAllocation,
     updateStablecoinAllocationWeight,
     stablecoinAmount,
@@ -17,18 +14,6 @@ export function StablecoinAllocationWidget() {
     ethAllocations,
     ethAmount,
   } = usePortfolioStore()
-
-  // Initialize allocations if empty
-  useEffect(() => {
-    if (stablecoinAllocations.length === 0) {
-      const initialAllocations: StablecoinAllocation[] = STABLECOIN_PRODUCTS.map((product) => ({
-        productId: product.id,
-        selected: false,
-        weight: 0,
-      }))
-      setStablecoinAllocations(initialAllocations)
-    }
-  }, [stablecoinAllocations.length, setStablecoinAllocations])
 
   const totalWeight = stablecoinAllocations.reduce((sum, a) => sum + a.weight, 0)
   const isValid = totalWeight === 100

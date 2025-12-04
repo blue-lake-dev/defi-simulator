@@ -5,6 +5,7 @@ import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAlloc
 import { ApyWidget } from '@/components/widgets/ApyWidget'
 import { HealthFactorWidget } from '@/components/widgets/HealthFactorWidget'
 import { LiquidationPriceWidget } from '@/components/widgets/LiquidationPriceWidget'
+import { TotalReturnWidget } from '@/components/widgets/TotalReturnWidget'
 
 export default function Home() {
   return (
@@ -44,9 +45,7 @@ export default function Home() {
             <EthAllocationWidget />
           </div>
           <div className="md:col-span-2 lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
-              Total Return Widget
-            </div>
+            <TotalReturnWidget />
           </div>
 
           {/* Row 3: Health Factor/Liquidation stacked + Stablecoin Allocation + Annual Return placeholder */}

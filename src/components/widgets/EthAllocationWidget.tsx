@@ -1,16 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { LeverageConfigModal } from '@/components/modals/LeverageConfigModal'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { ETH_PRODUCTS, getCollateralParams } from '@/lib/constants'
-import type { EthAllocation, LeverageConfig } from '@/types'
+import type { LeverageConfig } from '@/types'
 
 export function EthAllocationWidget() {
   const {
     ethAllocations,
-    setEthAllocations,
     toggleEthAllocation,
     updateEthAllocationWeight,
     setLeverageConfig,
@@ -20,18 +19,6 @@ export function EthAllocationWidget() {
   // Modal state
   const [leverageModalOpen, setLeverageModalOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
-
-  // Initialize allocations if empty
-  useEffect(() => {
-    if (ethAllocations.length === 0) {
-      const initialAllocations: EthAllocation[] = ETH_PRODUCTS.map((product) => ({
-        productId: product.id,
-        selected: false,
-        weight: 0,
-      }))
-      setEthAllocations(initialAllocations)
-    }
-  }, [ethAllocations.length, setEthAllocations])
 
   const totalWeight = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
   const isValid = totalWeight === 100

@@ -5,6 +5,20 @@ import type {
   LeveragedStablecoinAllocation,
   LeverageConfig,
 } from '@/types'
+import { ETH_PRODUCTS, STABLECOIN_PRODUCTS } from '@/lib/constants'
+
+// Initialize allocations from product constants
+const initialEthAllocations: EthAllocation[] = ETH_PRODUCTS.map((product) => ({
+  productId: product.id,
+  selected: false,
+  weight: 0,
+}))
+
+const initialStablecoinAllocations: StablecoinAllocation[] = STABLECOIN_PRODUCTS.map((product) => ({
+  productId: product.id,
+  selected: false,
+  weight: 0,
+}))
 
 interface PortfolioStore {
   // Portfolio Setup
@@ -59,8 +73,8 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
   priceChangeScenario: 20,
 
   // Initial state - Allocations
-  ethAllocations: [],
-  stablecoinAllocations: [],
+  ethAllocations: initialEthAllocations,
+  stablecoinAllocations: initialStablecoinAllocations,
   leveragedStablecoinAllocations: [],
 
   // Computed values
