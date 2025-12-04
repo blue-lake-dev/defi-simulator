@@ -53,8 +53,8 @@ Build a DeFi portfolio APY simulator for institutional investors (DAT - Digital 
 
 ### 1. Portfolio Setup
 - Total investment amount input (USD)
-- ETH vs Stablecoin ratio slider (must sum to 100%)
-- Investment period selection: 1mo / 3mo / 6mo / 1yr / 2yr / 3yr / 5yr
+- ETH vs Stablecoin ratio slider with draggable circular handle (must sum to 100%)
+- Investment period: numeric input with "years" suffix (supports decimals, e.g., 1.5 years)
 
 ### 2. ETH Allocation
 - Select from ETH products and assign weights (must sum to 100%)
@@ -183,35 +183,55 @@ lido, ether.fi-stake, pendle, aave-v3, morpho-v1, ethena-usde, maple
 
 ## UI/UX Requirements
 
-### Layout Flow
-1. **Step 1**: Investment amount + period + ETH/Stable ratio
-2. **Step 2**: ETH product selection + weights + leverage config + ETH price scenario
-3. **Step 3**: Stablecoin product selection + weights (show leveraged portions separately)
-4. **Results**: Summary cards with APY, returns, risk metrics
+### Layout: Single-Page Dashboard with Widget Grid
+The app is a single-page dashboard (SPA) with all inputs and results visible on one screen, updating in real-time. Uses a bento-box style widget grid with mixed-size cards.
+
+### Widget Layout (4-column grid):
+```
+┌─────────────────────────────────┬───────────┐
+│ PORTFOLIO SETUP (wide, 3 cols)  │ APY       │
+│                                 │ (small)   │
+├───────────┬─────────────────────┼───────────┤
+│ ETH PRICE │ ETH ALLOCATION      │ TOTAL     │
+│ (small)   │ (medium, 2 cols)    │ RETURN    │
+├───────────┼─────────────────────┼───────────┤
+│ HEALTH    │ STABLECOIN          │ EXPECTED  │
+│ FACTOR    │ ALLOCATION          │ RETURN    │
+│ (small)   │ (medium-tall,       │ (small)   │
+├───────────┤  2 cols, 2 rows)    ├───────────┤
+│ LIQ.      │                     │ BREAKDOWN │
+│ PRICE     │                     │ (tall)    │
+└───────────┴─────────────────────┴───────────┘
+```
+
+### Widget Descriptions:
+1. **Portfolio Setup** (wide): Investment amount, period input, allocation ratio slider
+2. **ETH Price** (small): Price input with fetch button, price scenario slider
+3. **ETH Allocation** (medium): Product list with weight inputs, leverage buttons
+4. **Stablecoin Allocation** (medium-tall, scrollable): Base allocation + leveraged allocation sections
+5. **Portfolio APY** (small, hero): Large APY percentage display
+6. **Total Return** (small, hero): Return including ETH price scenario
+7. **Expected Return** (small, hero): Annual/monthly/daily returns
+8. **Health Factor** (small): Gauge with color indicator (only when leverage active)
+9. **Liquidation Price** (small): Price with % drop (only when leverage active)
+10. **Breakdown** (tall): Detailed asset breakdown table
+
+### Stablecoin Allocation Widget
+Two distinct sections with min-height and overflow-y scroll:
+- **Base Allocation**: Product rows with weight inputs (must total 100%)
+- **Leveraged Allocation** (only if leverage active): Separate inputs for borrowed funds
 
 ### Leverage Display
-When leverage is active, the Stablecoin allocation section must clearly separate:
-- Base allocation (from user's Stablecoin portion)
-- Leveraged allocation (from borrowed funds)
-
-Example display:
-```
-Stablecoin Allocation ($600,000 base + $50,000 leveraged)
-
-Product              Base        Leveraged    Total       APY
-Aave USDC           $120,000    -            $120,000    3.37%
-Morpho steakUSDC    $180,000    -            $180,000    4.19%
-Ethena sUSDe        $150,000    -            $150,000    4.88%
-Maple Syrup USDC    $150,000    $50,000      $200,000    6.82%
-                    ─────────   ─────────    ─────────
-Total               $600,000    $50,000      $650,000
-```
+Each ETH product row shows:
+- Weight input (0-100%)
+- Leverage button (for eligible products: stETH, weETH)
+- If leverage applied: inline display (e.g., "60% LTV · $60k") - clickable to edit
 
 ### Risk Warnings
-Display prominently when leverage is enabled:
+Display in dedicated widgets when leverage is enabled:
 - Health Factor (color-coded: green >1.5, yellow 1.2-1.5, red <1.2)
 - Liquidation Price with percentage drop from current
-- Annual borrow cost
+- Annual borrow cost shown in breakdown
 
 ---
 
@@ -238,8 +258,8 @@ NEXT_PUBLIC_WEETH_LIQ_THRESHOLD=0.78
 2. **Leverage constraints**: Only wstETH and weETH can be used as collateral
 3. **Pendle PT**: Use simple interest, not compound (fixed yield to maturity)
 4. **Error handling**: Gracefully handle API failures with cached/default values
-5. **Responsive**: Mobile-friendly, but optimize for desktop (institutional users)
-6. **Monochrome**: Use grayscale color scheme until brand colors are finalized
+5. **Responsive**: Desktop-first, responsive design (institutional users primarily on desktop)
+6. **Color Palette**: Deep Purple (#48104a) primary, see UX_PILOT_PROMPTS.md for full palette
 
 ---
 
