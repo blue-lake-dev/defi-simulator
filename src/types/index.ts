@@ -14,6 +14,9 @@ export interface PortfolioState {
   stablecoinAmount: number
 }
 
+// Yield denomination types
+export type YieldType = 'ETH' | 'USD'
+
 // ETH Products
 export interface EthProduct {
   id: string
@@ -21,6 +24,7 @@ export interface EthProduct {
   name: string
   apy: number
   isCollateralEligible: boolean
+  yieldType: YieldType
 }
 
 export interface EthAllocation {
@@ -49,6 +53,7 @@ export interface StablecoinProduct {
   apy: number
   apyRange?: [number, number] // for variable APY products
   risk: RiskLevel
+  yieldType: YieldType
 }
 
 export interface StablecoinAllocation {

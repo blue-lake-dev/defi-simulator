@@ -8,12 +8,16 @@ export function AnnualReturnWidget() {
   const {
     investmentAmount,
     ethRatio,
+    ethPrice,
     ethAllocations,
     stablecoinAllocations,
     ethAmount,
     stablecoinAmount,
     totalBorrowedAmount,
   } = usePortfolioStore()
+
+  const currentEthAmount = ethAmount()
+  const currentStableAmount = stablecoinAmount()
 
   // Calculate deployment percentage
   const ethTotal = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
@@ -23,76 +27,97 @@ export function AnnualReturnWidget() {
   const deployedPercent = Math.round((ethDeployed + stableDeployed) * 100)
   const isFullyDeployed = deployedPercent === 100
 
-  // Calculate ETH product returns
+  // Calculate ETH position in ETH terms
+  const ethPositionInEth = ethPrice > 0 ? currentEthAmount / ethPrice : 0
+
+  // Calculate ETH product returns (in ETH terms, then convert to USD)
   const ethProductReturns = ethAllocations
     .filter((a) => a.weight > 0)
     .map((allocation) => {
       const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
       if (!product) return null
-      const amount = ethAmount() * (allocation.weight / 100)
-      const annualReturn = amount * (product.apy / 100)
+      const amountUsd = currentEthAmount * (allocation.weight / 100)
+      const amountEth = ethPrice > 0 ? amountUsd / ethPrice : 0
+      const yieldEth = amountEth * (product.apy / 100)
+      const yieldUsd = yieldEth * ethPrice // Convert to USD at current price
       return {
         name: product.name,
-        amount,
+        amountUsd,
+        amountEth,
         apy: product.apy,
-        annualReturn,
+        yieldEth,
+        yieldUsd,
       }
     })
     .filter(Boolean)
 
-  // Calculate Stablecoin product returns
+  // Calculate Stablecoin product returns (in USD terms)
   const stablecoinProductReturns = stablecoinAllocations
     .filter((a) => a.weight > 0)
     .map((allocation) => {
       const product = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.productId)
       if (!product) return null
-      const amount = stablecoinAmount() * (allocation.weight / 100)
-      const annualReturn = amount * (product.apy / 100)
+      const amount = currentStableAmount * (allocation.weight / 100)
+      const yieldUsd = amount * (product.apy / 100)
       return {
         name: product.name,
         protocol: product.protocol,
         amount,
         apy: product.apy,
-        annualReturn,
+        yieldUsd,
       }
     })
     .filter(Boolean)
 
-  // Calculate leverage cost
+  // Calculate leverage details
   const leverageDetails = ethAllocations
     .filter((a) => a.leverage?.enabled)
     .map((allocation) => {
       const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
       if (!product || !allocation.leverage) return null
 
-      const positionValue = ethAmount() * (allocation.weight / 100)
+      const positionValue = currentEthAmount * (allocation.weight / 100)
       const collateralValue = positionValue * (allocation.leverage.collateralPercent / 100)
       const borrowed = collateralValue * (allocation.leverage.ltv / 100)
       const borrowRate = getBorrowRate(allocation.leverage.borrowAsset)
       const annualCost = borrowed * (borrowRate / 100)
 
+      // Leverage yield (USD)
+      const deployTarget = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.leverage!.deployTargetId)
+      const deployApy = deployTarget?.apy ?? 0
+      const grossYield = borrowed * (deployApy / 100)
+      const netYield = grossYield - annualCost
+
       return {
         productName: product.name,
         borrowed,
         borrowRate,
+        deployApy,
+        grossYield,
         annualCost,
+        netYield,
       }
     })
     .filter(Boolean)
 
   const totalBorrowed = totalBorrowedAmount()
   const totalLeverageCost = leverageDetails.reduce((sum, d) => sum + (d?.annualCost ?? 0), 0)
+  const totalLeverageGrossYield = leverageDetails.reduce((sum, d) => sum + (d?.grossYield ?? 0), 0)
+  const totalLeverageNetYield = leverageDetails.reduce((sum, d) => sum + (d?.netYield ?? 0), 0)
 
-  // Total annual return
-  const totalEthReturn = ethProductReturns.reduce((sum, p) => sum + (p?.annualReturn ?? 0), 0)
-  const totalStableReturn = stablecoinProductReturns.reduce((sum, p) => sum + (p?.annualReturn ?? 0), 0)
-  const netAnnualReturn = totalEthReturn + totalStableReturn - totalLeverageCost
+  // Total yields
+  const totalEthYieldEth = ethProductReturns.reduce((sum, p) => sum + (p?.yieldEth ?? 0), 0)
+  const totalEthYieldUsd = ethProductReturns.reduce((sum, p) => sum + (p?.yieldUsd ?? 0), 0)
+  const totalStableYieldUsd = stablecoinProductReturns.reduce((sum, p) => sum + (p?.yieldUsd ?? 0), 0)
+
+  // Net annual return (yield only, no price impact)
+  const netAnnualReturn = totalEthYieldUsd + totalStableYieldUsd + totalLeverageNetYield
 
   // Daily and monthly
   const dailyReturn = netAnnualReturn / 365
   const monthlyReturn = netAnnualReturn / 12
 
-  const formatAmount = (amount: number): string => {
+  const formatUsd = (amount: number): string => {
     if (Math.abs(amount) >= 1000000) {
       return `$${(amount / 1000000).toFixed(2)}M`
     }
@@ -112,13 +137,26 @@ export function AnnualReturnWidget() {
     return `$${Math.round(amount)}`
   }
 
+  const formatEth = (amount: number): string => {
+    if (amount >= 1000) {
+      return `${amount.toFixed(1)} ETH`
+    }
+    if (amount >= 1) {
+      return `${amount.toFixed(2)} ETH`
+    }
+    if (amount >= 0.01) {
+      return `${amount.toFixed(3)} ETH`
+    }
+    return `${amount.toFixed(4)} ETH`
+  }
+
   return (
-    <Card title="Annual Return" className="h-full">
+    <Card title="Annual Yield" subtitle="Yield only (excl. price change)" className="h-full">
       <div className="space-y-4">
         {/* Main Return Display */}
         <div>
           <span className="text-4xl font-bold text-gray-900">
-            {formatAmount(netAnnualReturn)}
+            {formatUsd(netAnnualReturn)}
           </span>
           <p className="text-sm text-gray-500 mt-1">
             Daily {formatCompact(dailyReturn)} · Monthly {formatCompact(monthlyReturn)}
@@ -135,60 +173,88 @@ export function AnnualReturnWidget() {
 
         {/* Breakdown Table */}
         <div className="pt-3 border-t border-gray-100 space-y-3 text-sm">
-          {/* ETH Exposure */}
+          {/* ETH Exposure - yields shown in ETH first, then USD */}
           {ethProductReturns.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">ETH Exposure</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">ETH Yield</p>
               {ethProductReturns.map((p) => (
                 <div key={p?.name} className="flex justify-between py-0.5">
                   <span className="text-gray-600">{p?.name}</span>
                   <span className="text-gray-900 tabular-nums">
-                    <span className="text-gray-400 text-xs mr-2">{formatCompact(p?.amount ?? 0)} · {p?.apy}%</span>
-                    {formatCompact(p?.annualReturn ?? 0)}
+                    <span className="text-purple-600 font-medium">{formatEth(p?.yieldEth ?? 0)}</span>
+                    <span className="text-gray-400 mx-1">→</span>
+                    <span className="font-medium">{formatCompact(p?.yieldUsd ?? 0)}</span>
                   </span>
                 </div>
               ))}
+              {ethProductReturns.length > 1 && (
+                <div className="flex justify-between py-0.5 text-xs border-t border-gray-50 mt-1 pt-1">
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="text-gray-700 tabular-nums">
+                    <span className="text-purple-500">{formatEth(totalEthYieldEth)}</span>
+                    <span className="text-gray-400 mx-1">→</span>
+                    <span>{formatCompact(totalEthYieldUsd)}</span>
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
           {/* Stablecoin Exposure */}
           {stablecoinProductReturns.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Stablecoin Exposure</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">USD Yield</p>
               {stablecoinProductReturns.map((p) => (
                 <div key={p?.name} className="flex justify-between py-0.5">
-                  <span className="text-gray-600">{p?.protocol?.split(' ')[0]}</span>
-                  <span className="text-gray-900 tabular-nums">
-                    <span className="text-gray-400 text-xs mr-2">{formatCompact(p?.amount ?? 0)} · {p?.apy}%</span>
-                    {formatCompact(p?.annualReturn ?? 0)}
+                  <span className="text-gray-600">{p?.protocol?.split(' ')[0]} {p?.name}</span>
+                  <span className="text-gray-900 tabular-nums font-medium">
+                    {formatCompact(p?.yieldUsd ?? 0)}
                   </span>
                 </div>
               ))}
+              {stablecoinProductReturns.length > 1 && (
+                <div className="flex justify-between py-0.5 text-xs border-t border-gray-50 mt-1 pt-1">
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="text-gray-700 tabular-nums">{formatCompact(totalStableYieldUsd)}</span>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Leverage Cost */}
+          {/* Leverage */}
           {totalBorrowed > 0 && (
             <div>
-              <p className="text-xs font-medium text-red-500 mb-1">Leverage Cost</p>
+              <p className="text-xs font-medium text-purple-600 mb-1">Leverage</p>
               {leverageDetails.map((d) => (
-                <div key={d?.productName} className="flex justify-between py-0.5">
-                  <span className="text-gray-600">Borrow</span>
-                  <span className="text-red-600 tabular-nums">
-                    <span className="text-gray-400 text-xs mr-2">-{formatCompact(d?.borrowed ?? 0)} · {d?.borrowRate}%</span>
-                    -{formatCompact(d?.annualCost ?? 0)}
-                  </span>
+                <div key={d?.productName} className="space-y-0.5">
+                  <div className="flex justify-between py-0.5">
+                    <span className="text-gray-600">Yield ({d?.deployApy}%)</span>
+                    <span className="text-green-600 tabular-nums font-medium">
+                      +{formatCompact(d?.grossYield ?? 0)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-0.5">
+                    <span className="text-gray-600">Borrow cost ({d?.borrowRate}%)</span>
+                    <span className="text-red-600 tabular-nums font-medium">
+                      -{formatCompact(d?.annualCost ?? 0)}
+                    </span>
+                  </div>
                 </div>
               ))}
+              <div className="flex justify-between py-0.5 text-xs border-t border-gray-50 mt-1 pt-1">
+                <span className="text-gray-500">Net leverage</span>
+                <span className={`tabular-nums ${totalLeverageNetYield >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalLeverageNetYield >= 0 ? '+' : ''}{formatCompact(totalLeverageNetYield)}
+                </span>
+              </div>
             </div>
           )}
 
           {/* Net Total */}
           <div className="pt-2 border-t border-gray-200">
             <div className="flex justify-between font-medium">
-              <span className="text-gray-900">Net Total</span>
+              <span className="text-gray-900">Total Yield</span>
               <span className="text-gray-900 tabular-nums">
-                <span className="text-gray-400 text-xs mr-2">{formatCompact(investmentAmount)}</span>
                 {formatCompact(netAnnualReturn)}
               </span>
             </div>

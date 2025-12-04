@@ -51,6 +51,7 @@ interface AllocationSliderProps {
   rightLabel?: string
   leftAmount?: number
   rightAmount?: number
+  ethPrice?: number // ETH price for converting left amount to ETH
 }
 
 export function AllocationSlider({
@@ -60,17 +61,34 @@ export function AllocationSlider({
   rightLabel = 'Stablecoin',
   leftAmount,
   rightAmount,
+  ethPrice,
 }: AllocationSliderProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(parseFloat(e.target.value))
   }
 
-  const formatAmount = (amount: number): string => {
+  const formatUsd = (amount: number): string => {
     if (amount >= 1000000) {
       return `$${(amount / 1000000).toFixed(1)}M`
     }
+    if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(0)}k`
+    }
     return `$${amount.toLocaleString()}`
   }
+
+  const formatEth = (amount: number): string => {
+    if (amount >= 1000) {
+      return `${amount.toFixed(1)} ETH`
+    }
+    if (amount >= 1) {
+      return `${amount.toFixed(2)} ETH`
+    }
+    return `${amount.toFixed(4)} ETH`
+  }
+
+  // Calculate ETH amount from USD
+  const ethAmount = (leftAmount && ethPrice && ethPrice > 0) ? leftAmount / ethPrice : 0
 
   return (
     <div className="w-full">
@@ -118,7 +136,16 @@ export function AllocationSlider({
       {/* Amounts */}
       {(leftAmount !== undefined && rightAmount !== undefined) && (
         <div className="text-xs text-gray-500 mt-1">
-          {formatAmount(leftAmount)} {leftLabel} | {formatAmount(rightAmount)} {rightLabel}
+          {ethPrice && ethPrice > 0 ? (
+            <>
+              <span className="text-purple-600 font-medium">{formatEth(ethAmount)}</span>
+              <span className="text-gray-400"> ({formatUsd(leftAmount)})</span>
+            </>
+          ) : (
+            <>{formatUsd(leftAmount)} {leftLabel}</>
+          )}
+          <span className="mx-1">|</span>
+          {formatUsd(rightAmount)} {rightLabel}
         </div>
       )}
     </div>

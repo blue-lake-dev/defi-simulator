@@ -13,6 +13,7 @@ export const ETH_PRODUCTS: EthProduct[] = [
     name: 'stETH',
     apy: 2.65,
     isCollateralEligible: true, // as wstETH
+    yieldType: 'ETH', // Yield paid in stETH (rebasing)
   },
   {
     id: 'etherfi-weeth',
@@ -20,6 +21,7 @@ export const ETH_PRODUCTS: EthProduct[] = [
     name: 'weETH',
     apy: 3.17,
     isCollateralEligible: true,
+    yieldType: 'ETH', // Yield accrues as weETH value vs ETH
   },
   {
     id: 'pendle-pt-wsteth',
@@ -27,6 +29,7 @@ export const ETH_PRODUCTS: EthProduct[] = [
     name: 'PT-wstETH',
     apy: 2.9,
     isCollateralEligible: false, // fixed yield, no collateral
+    yieldType: 'ETH', // Redeems for wstETH at maturity
   },
   {
     id: 'pendle-pt-weeth',
@@ -34,6 +37,7 @@ export const ETH_PRODUCTS: EthProduct[] = [
     name: 'PT-weETH',
     apy: 2.7,
     isCollateralEligible: false, // fixed yield, no collateral
+    yieldType: 'ETH', // Redeems for weETH at maturity
   },
 ]
 
@@ -45,6 +49,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'USDC',
     apy: 3.4,
     risk: 'Low',
+    yieldType: 'USD',
   },
   {
     id: 'aave-usdt',
@@ -52,6 +57,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'USDT',
     apy: 4.3,
     risk: 'Low',
+    yieldType: 'USD',
   },
   {
     id: 'morpho-steakusdc',
@@ -60,6 +66,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     apy: 4.0,
     apyRange: [3.7, 4.2],
     risk: 'Low',
+    yieldType: 'USD',
   },
   {
     id: 'morpho-gtusdc',
@@ -68,6 +75,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     apy: 4.4,
     apyRange: [3.7, 5.1],
     risk: 'Low',
+    yieldType: 'USD',
   },
   {
     id: 'morpho-bbqusdc',
@@ -76,6 +84,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     apy: 7.2,
     apyRange: [6.9, 7.5],
     risk: 'Medium',
+    yieldType: 'USD',
   },
   {
     id: 'morpho-steakusdt',
@@ -84,6 +93,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     apy: 6.2,
     apyRange: [4.6, 7.8],
     risk: 'Low',
+    yieldType: 'USD',
   },
   {
     id: 'ethena-susde',
@@ -91,6 +101,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'sUSDe',
     apy: 4.9,
     risk: 'Medium',
+    yieldType: 'USD',
   },
   {
     id: 'maple-syrup-usdc',
@@ -98,6 +109,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'Syrup USDC',
     apy: 6.8,
     risk: 'Medium',
+    yieldType: 'USD', // Base yield in USD, also earns SYRUP tokens
   },
   {
     id: 'maple-syrup-usdt',
@@ -105,6 +117,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'Syrup USDT',
     apy: 6.2,
     risk: 'Medium',
+    yieldType: 'USD', // Base yield in USD, also earns SYRUP tokens
   },
   {
     id: 'pendle-pt-susde',
@@ -112,6 +125,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'PT-sUSDe',
     apy: 5.9,
     risk: 'Medium',
+    yieldType: 'USD',
   },
   {
     id: 'pendle-pt-syrupusdc',
@@ -119,6 +133,7 @@ export const STABLECOIN_PRODUCTS: StablecoinProduct[] = [
     name: 'PT-syrupUSDC',
     apy: 6.5,
     risk: 'Medium',
+    yieldType: 'USD',
   },
 ]
 

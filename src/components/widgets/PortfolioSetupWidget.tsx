@@ -9,6 +9,7 @@ export function PortfolioSetupWidget() {
   const {
     investmentAmount,
     ethRatio,
+    ethPrice,
     setInvestmentAmount,
     setEthRatio,
     ethAmount,
@@ -42,6 +43,7 @@ export function PortfolioSetupWidget() {
             rightLabel="Stablecoin"
             leftAmount={ethAmount()}
             rightAmount={stablecoinAmount()}
+            ethPrice={ethPrice}
           />
         </div>
       </div>

@@ -14,6 +14,7 @@ export function EthAllocationWidget() {
     updateEthAllocationWeight,
     setLeverageConfig,
     ethAmount,
+    ethPrice,
   } = usePortfolioStore()
 
   // Modal state
@@ -23,7 +24,7 @@ export function EthAllocationWidget() {
   const totalWeight = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
   const isValid = totalWeight === 100
 
-  const formatAmount = (amount: number): string => {
+  const formatUsd = (amount: number): string => {
     if (amount >= 1000000) {
       return `$${(amount / 1000000).toFixed(2)}M`
     }
@@ -32,6 +33,20 @@ export function EthAllocationWidget() {
     }
     return `$${amount.toLocaleString()}`
   }
+
+  const formatEth = (amount: number): string => {
+    if (amount >= 1000) {
+      return `${amount.toFixed(1)} ETH`
+    }
+    if (amount >= 1) {
+      return `${amount.toFixed(2)} ETH`
+    }
+    return `${amount.toFixed(4)} ETH`
+  }
+
+  // Calculate total ETH amount
+  const totalEthUsd = ethAmount()
+  const totalEthAmount = ethPrice > 0 ? totalEthUsd / ethPrice : 0
 
   const handleWeightChange = (productId: string, value: string) => {
     const numValue = parseInt(value) || 0
@@ -53,7 +68,7 @@ export function EthAllocationWidget() {
   return (
     <Card
       title="ETH Allocation"
-      subtitle={`${formatAmount(ethAmount())} · Must total 100%`}
+      subtitle={`${formatEth(totalEthAmount)} (${formatUsd(totalEthUsd)}) · Must total 100%`}
     >
       {/* Header Row - visible on lg screens */}
       <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
@@ -121,7 +136,7 @@ export function EthAllocationWidget() {
                       }}
                     >
                       {leverage?.enabled
-                        ? `${leverage.ltv}% LTV · ${formatAmount(
+                        ? `${leverage.ltv}% LTV · ${formatUsd(
                             ethAmount() *
                               (weight / 100) *
                               (leverage.collateralPercent / 100) *
@@ -182,7 +197,7 @@ export function EthAllocationWidget() {
                         }}
                       >
                         {leverage?.enabled
-                          ? `${leverage.ltv}% LTV · ${formatAmount(
+                          ? `${leverage.ltv}% LTV · ${formatUsd(
                               ethAmount() *
                                 (weight / 100) *
                                 (leverage.collateralPercent / 100) *
@@ -203,11 +218,11 @@ export function EthAllocationWidget() {
       <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="flex items-center justify-between text-xs mb-1">
           <span className={isValid ? 'text-green-600 font-medium' : 'text-amber-600 font-medium'}>
-            Total: {totalWeight}% · {formatAmount(ethAmount() * (totalWeight / 100))}
+            Total: {totalWeight}% · {formatEth(totalEthAmount * (totalWeight / 100))} ({formatUsd(totalEthUsd * (totalWeight / 100))})
           </span>
           {totalBorrowed > 0 && (
             <span className="text-purple-600">
-              {formatAmount(totalBorrowed)} borrowed
+              {formatUsd(totalBorrowed)} borrowed
             </span>
           )}
         </div>

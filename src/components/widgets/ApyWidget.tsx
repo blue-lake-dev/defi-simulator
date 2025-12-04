@@ -91,13 +91,17 @@ export function ApyWidget() {
         {/* APY Breakdown */}
         <div className="space-y-2 pt-2 border-t border-gray-100">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">ETH Yield</span>
+            <span className="text-gray-600">
+              ETH Yield <span className="text-xs text-purple-500">(in ETH)</span>
+            </span>
             <span className="font-medium text-gray-900">
               {ethApy.toFixed(2)}%
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Stablecoin Yield</span>
+            <span className="text-gray-600">
+              USD Yield <span className="text-xs text-gray-400">(in USD)</span>
+            </span>
             <span className="font-medium text-gray-900">
               {stablecoinApy.toFixed(2)}%
             </span>
