@@ -136,10 +136,6 @@ export const BORROW_OPTIONS: BorrowOption[] = [
     borrowRate: 4.7,
   },
   {
-    asset: 'USDS',
-    borrowRate: 5.7,
-  },
-  {
     asset: 'USDe',
     borrowRate: 3.5,
   },
@@ -163,13 +159,13 @@ export function getCollateralParams(productId: string): CollateralParams | null 
 }
 
 // Helper to get borrow rate by asset (fallback only - use useApyStore for live rates)
-export function getBorrowRate(asset: 'USDC' | 'USDS' | 'USDe'): number {
+export function getBorrowRate(asset: 'USDC' | 'USDe'): number {
   const option = BORROW_OPTIONS.find((o) => o.asset === asset)
   return option?.borrowRate ?? 5.5
 }
 
 // Helper to get fallback borrow rate
-export function getFallbackBorrowRate(asset: 'USDC' | 'USDS' | 'USDe'): number {
+export function getFallbackBorrowRate(asset: 'USDC' | 'USDe'): number {
   const option = BORROW_OPTIONS.find((o) => o.asset === asset)
   return option?.borrowRate ?? 5.5
 }

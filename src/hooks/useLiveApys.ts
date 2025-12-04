@@ -52,7 +52,7 @@ export function useLiveProducts() {
 }
 
 // Hook to get live borrow rate
-export function useLiveBorrowRate(asset: 'USDC' | 'USDS' | 'USDe'): number {
+export function useLiveBorrowRate(asset: 'USDC' | 'USDe'): number {
   const { borrowRates } = useApyStore()
   const fallback = getFallbackBorrowRate(asset)
   return borrowRates[asset] ?? fallback

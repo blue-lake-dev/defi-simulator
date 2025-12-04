@@ -48,7 +48,7 @@ export interface LeverageConfig {
   enabled: boolean
   collateralPercent: number // 0-100, how much of position to use
   ltv: number // 0 to maxLtv
-  borrowAsset: 'USDC' | 'USDS' | 'USDe'
+  borrowAsset: 'USDC' | 'USDe'
   deployTargetId: string // which stablecoin product receives borrowed funds
 }
 
@@ -80,7 +80,7 @@ export interface LeveragedStablecoinAllocation {
 
 // Borrow Options
 export interface BorrowOption {
-  asset: 'USDC' | 'USDS' | 'USDe'
+  asset: 'USDC' | 'USDe'
   borrowRate: number
 }
 
@@ -132,7 +132,7 @@ export interface DefiLlamaBorrowResponse {
 export interface CachedApyData {
   timestamp: number // Unix timestamp when cached
   poolApys: Record<string, number> // poolId or productId -> APY
-  borrowRates: Record<string, number> // asset (USDC, USDS, USDe) -> borrow rate
+  borrowRates: Record<string, number> // asset (USDC, USDe) -> borrow rate
 }
 
 // API route response
