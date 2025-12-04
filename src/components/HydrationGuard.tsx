@@ -13,22 +13,19 @@ export function HydrationGuard({ children }: HydrationGuardProps) {
   if (!hydrated) {
     // Show a minimal loading state that matches the layout
     return (
-      <div className="min-h-screen bg-[#FAFAFA]">
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-semibold text-[#48104a]">Juicy Yield</h1>
-              <span className="text-sm text-gray-500">
-                Institutional DeFi Portfolio Simulator
-              </span>
-            </div>
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-[#48104a]">PlumLabs</span>
+            <span className="text-gray-300">|</span>
+            <span className="text-lg font-medium text-gray-600">Juicy Yield Simulator</span>
           </div>
-        </header>
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-pulse text-gray-400">Loading...</div>
+          <div className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 bg-[#48104a] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="w-2.5 h-2.5 bg-[#48104a] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div className="w-2.5 h-2.5 bg-[#48104a] rounded-full animate-bounce"></div>
           </div>
-        </main>
+        </div>
       </div>
     )
   }
