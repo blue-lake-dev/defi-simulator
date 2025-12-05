@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PlumLabs | Juicy Yield Simulator",
-  description: "Institutional DeFi Portfolio APY Simulator - Allocate funds between ETH and Stablecoins, apply leverage, and simulate returns across different price scenarios.",
+  title: "PlumLabs | DeFi Yield Simulator",
+  description: "Simulate DeFi portfolio yields on Ethereum's most battle-tested protocols.",
 };
 
 export default function RootLayout({
