@@ -1,5 +1,11 @@
 'use client'
 
+/**
+ * @deprecated This component is no longer used.
+ * Logo and language toggle have been moved to the Sidebar component.
+ * This file can be safely deleted in a future cleanup.
+ */
+
 import { useState } from 'react'
 
 export function Header() {

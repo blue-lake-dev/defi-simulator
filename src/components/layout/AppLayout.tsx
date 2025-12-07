@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, ReactNode } from 'react'
-import { Header } from '@/components/Header'
 import { Sidebar, TabId } from './Sidebar'
 
 interface AppLayoutProps {
@@ -37,21 +36,19 @@ export function AppLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
-      <Header />
+    <div className="h-screen bg-[#FAFAFA] flex overflow-hidden">
+      {/* Sidebar - full height */}
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Global Controls - edge-to-edge, no bottom border */}
-      <div>
-        {globalControls}
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex">
-        {/* Sidebar */}
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Right side: Global Controls + Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Global Controls */}
+        <div className="border-b border-gray-200">
+          {globalControls}
+        </div>
 
         {/* Content Area */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 overflow-y-auto">
           {renderContent()}
         </main>
       </div>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 type TabId = 'eth' | 'stablecoin' | 'hedge' | 'results'
 
 interface Tab {
@@ -47,30 +49,70 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+  const [lang, setLang] = useState<'en' | 'kr'>('en')
+
   return (
-    <nav className="w-[240px] flex-shrink-0 bg-white border-r border-gray-200 pt-4 px-4">
-      <div className="flex flex-col gap-2">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`
-                flex items-center gap-3 text-left px-4 py-3 rounded-xl transition-colors text-sm font-medium
-                ${isActive
-                  ? 'bg-[#f5f0f5] text-[#48104a]'
-                  : 'text-gray-500 hover:bg-gray-50'
-                }
-              `}
-            >
-              <span className={isActive ? 'text-[#48104a]' : 'text-gray-400'}>
-                {tab.icon}
-              </span>
-              {tab.label}
-            </button>
-          )
-        })}
+    <nav className="w-[240px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full">
+      {/* Logo Section */}
+      <div className="px-6 pt-6 pb-4">
+        <div className="text-xl font-bold text-[#48104a]">Prism DeFi Labs</div>
+        <div className="text-sm text-gray-500">DeFi Yield Simulator</div>
+      </div>
+
+      {/* Divider */}
+      <div className="mx-4 border-t border-gray-200" />
+
+      {/* Navigation */}
+      <div className="flex-1 px-4 pt-4">
+        <div className="flex flex-col gap-2">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`
+                  flex items-center gap-3 text-left px-4 py-3 rounded-xl transition-colors text-sm font-medium
+                  ${isActive
+                    ? 'bg-[#f5f0f5] text-[#48104a]'
+                    : 'text-gray-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <span className={isActive ? 'text-[#48104a]' : 'text-gray-400'}>
+                  {tab.icon}
+                </span>
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Language Toggle */}
+      <div className="px-4 pb-6">
+        <div className="flex items-center bg-gray-100 rounded-full p-1">
+          <button
+            onClick={() => setLang('en')}
+            className={`flex-1 px-4 py-1.5 text-sm font-medium transition-colors rounded-full ${
+              lang === 'en'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLang('kr')}
+            className={`flex-1 px-4 py-1.5 text-sm font-medium transition-colors rounded-full ${
+              lang === 'kr'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            KR
+          </button>
+        </div>
       </div>
     </nav>
   )
