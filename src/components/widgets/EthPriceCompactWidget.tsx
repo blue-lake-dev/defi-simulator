@@ -89,7 +89,7 @@ export function EthPriceCompactWidget() {
   const projectedPrice = ethPrice * (1 + priceChangeScenario / 100)
 
   return (
-    <div className="bg-white pt-6 px-6 pb-10 flex-shrink-0">
+    <div className="pt-6 px-6 pb-10 flex-shrink-0">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-gray-900">ETH Price</h3>

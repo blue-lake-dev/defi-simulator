@@ -7,11 +7,13 @@ import { EthProductsTab } from '@/components/tabs/EthProductsTab'
 // Global Controls: Portfolio Allocation expands, ETH Price fits content with gap between
 function GlobalControls() {
   return (
-    <div className="flex gap-4">
-      <div className="flex-1">
+    <div className="flex gap-4 p-4">
+      <div className="flex-1 bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
         <PortfolioAllocationWidget />
       </div>
-      <EthPriceCompactWidget />
+      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+        <EthPriceCompactWidget />
+      </div>
     </div>
   )
 }
