@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prism DeFi Labs | DeFi Yield Simulator",
+  title: "Spectrum | DeFi Yield Simulator",
   description: "Simulate DeFi portfolio yields on Ethereum's most battle-tested protocols.",
 };
 
