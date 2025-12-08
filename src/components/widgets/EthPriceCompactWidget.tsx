@@ -16,6 +16,15 @@ export function EthPriceCompactWidget() {
     priceChangeScenario >= 0 ? `+${priceChangeScenario}` : `${priceChangeScenario}`
   )
   const [isLoading, setIsLoading] = useState(false)
+  const [hasFetched, setHasFetched] = useState(false)
+
+  // Auto-fetch ETH price on initial render
+  useEffect(() => {
+    if (!hasFetched) {
+      setHasFetched(true)
+      fetchLivePrice()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLocalPrice(ethPrice.toLocaleString())
@@ -45,7 +54,7 @@ export function EthPriceCompactWidget() {
     }
   }
 
-  const handleFetchLivePrice = async () => {
+  const fetchLivePrice = async () => {
     setIsLoading(true)
     try {
       const response = await fetch(
@@ -117,11 +126,11 @@ export function EthPriceCompactWidget() {
             />
           </div>
           <button
-            onClick={handleFetchLivePrice}
+            onClick={fetchLivePrice}
             disabled={isLoading}
             className="mt-1.5 text-xs text-[#48104a] hover:underline disabled:opacity-50"
           >
-            {isLoading ? 'Loading...' : 'Fetch'}
+            {isLoading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
 

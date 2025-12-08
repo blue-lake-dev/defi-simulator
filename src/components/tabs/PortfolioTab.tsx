@@ -11,8 +11,13 @@ import { PortfolioAllocationWidget } from '@/components/widgets/PortfolioAllocat
 import { EthPriceCompactWidget } from '@/components/widgets/EthPriceCompactWidget'
 
 type BreakdownView = 'eth' | 'stablecoin' | 'hedge'
+type TabId = 'portfolio' | 'eth' | 'stablecoin' | 'hedge'
 
-export function PortfolioTab() {
+interface PortfolioTabProps {
+  onNavigate?: (tab: TabId) => void
+}
+
+export function PortfolioTab({ onNavigate }: PortfolioTabProps) {
   const {
     investmentAmount,
     investmentPeriod,
@@ -51,6 +56,10 @@ export function PortfolioTab() {
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
+
+  // ============ EMPTY STATE CHECKS ============
+  const hasEthSelected = ethAllocations.some(a => a.selected && a.weight > 0)
+  const hasStablecoinSelected = stablecoinAllocations.some(a => a.selected && a.weight > 0)
 
   // ============ CALCULATIONS ============
 
@@ -311,6 +320,50 @@ export function PortfolioTab() {
           <EthPriceCompactWidget />
         </div>
       </div>
+
+      {/* Empty State Toast Banners */}
+      {!hasEthSelected && (
+        <button
+          onClick={() => onNavigate?.('eth')}
+          className="w-full bg-[#faf5ff] border border-[#48104a]/20 rounded-xl px-4 py-3 flex items-center justify-between hover:bg-[#f5eef5] transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 flex items-center justify-center text-[#48104a] opacity-50">
+              <svg className="w-3 h-5" viewBox="0 0 256 417" fill="currentColor">
+                <path d="M127.961 0l-2.795 9.5v275.668l2.795 2.79 127.962-75.638z" fillOpacity="0.6"/>
+                <path d="M127.962 0L0 212.32l127.962 75.639V154.158z"/>
+                <path d="M127.961 312.187l-127.96-75.637 127.96 180.373 127.96-180.373z" fillOpacity="0.6"/>
+                <path d="M0 236.55l127.962 75.637V154.158z"/>
+              </svg>
+            </div>
+            <span className="text-sm text-gray-700">You haven't allocated any ETH products yet</span>
+          </div>
+          <svg className="w-5 h-5 text-[#48104a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+
+      {!hasStablecoinSelected && (
+        <button
+          onClick={() => onNavigate?.('stablecoin')}
+          className="w-full bg-[#faf5ff] border border-[#48104a]/20 rounded-xl px-4 py-3 flex items-center justify-between hover:bg-[#f5eef5] transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 text-[#48104a] opacity-50">
+              <svg viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" fill="currentColor" fillOpacity="0.15"/>
+                <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2"/>
+                <path d="M16.5 8v2.05c2.25.26 3.5 1.55 3.5 3.45h-2c0-1.1-.7-2-2-2-1.5 0-2 .8-2 1.5 0 .9.5 1.4 2.2 1.8 2.3.5 3.8 1.3 3.8 3.5 0 1.9-1.35 3.05-3.5 3.2V24h-1v-2.55c-2.15-.35-3.5-1.75-3.5-3.95h2c0 1.5 1 2.5 2.5 2.5 1.3 0 2-.6 2-1.5 0-.8-.4-1.4-2.2-1.8-2.5-.6-3.8-1.5-3.8-3.5 0-1.7 1.25-2.95 3.5-3.15V8h1z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span className="text-sm text-gray-700">You haven't allocated any stablecoin products yet</span>
+          </div>
+          <svg className="w-5 h-5 text-[#48104a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
 
       {/* Card 1: Expected Balance Hero */}
       <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">

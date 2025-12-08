@@ -10,17 +10,22 @@ interface Tab {
   icon: React.ReactNode
 }
 
-// Icons matching the image
+// ETH diamond logo
 const EthIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 256 417" fill="currentColor">
     <path d="M127.961 0l-2.795 9.5v275.668l2.795 2.79 127.962-75.638z" fillOpacity="0.6"/>
     <path d="M127.962 0L0 212.32l127.962 75.639V154.158z"/>
+    <path d="M127.961 312.187l-127.96-75.637 127.96 180.373 127.96-180.373z" fillOpacity="0.6"/>
+    <path d="M0 236.55l127.962 75.637V154.158z"/>
   </svg>
 )
 
-const CoinsIcon = () => (
-  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+// Stablecoin (USDC-style) icon
+const StablecoinIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
+    <circle cx="16" cy="16" r="14" fill="currentColor" fillOpacity="0.15"/>
+    <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2"/>
+    <path d="M16.5 8v2.05c2.25.26 3.5 1.55 3.5 3.45h-2c0-1.1-.7-2-2-2-1.5 0-2 .8-2 1.5 0 .9.5 1.4 2.2 1.8 2.3.5 3.8 1.3 3.8 3.5 0 1.9-1.35 3.05-3.5 3.2V24h-1v-2.55c-2.15-.35-3.5-1.75-3.5-3.95h2c0 1.5 1 2.5 2.5 2.5 1.3 0 2-.6 2-1.5 0-.8-.4-1.4-2.2-1.8-2.5-.6-3.8-1.5-3.8-3.5 0-1.7 1.25-2.95 3.5-3.15V8h1z" fill="currentColor"/>
   </svg>
 )
 
@@ -39,7 +44,7 @@ const PortfolioIcon = () => (
 const tabs: Tab[] = [
   { id: 'portfolio', label: 'Portfolio', icon: <PortfolioIcon /> },
   { id: 'eth', label: 'ETH Products', icon: <EthIcon /> },
-  { id: 'stablecoin', label: 'Stablecoin Products', icon: <CoinsIcon /> },
+  { id: 'stablecoin', label: 'Stablecoin Products', icon: <StablecoinIcon /> },
   { id: 'hedge', label: 'Hedge', icon: <ShieldIcon /> },
 ]
 
@@ -55,7 +60,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     <nav className="w-[240px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Logo Section */}
       <div className="px-6 pt-6 pb-4">
-        <div className="text-xl font-bold text-[#48104a]">Prism DeFi Labs</div>
+        <div className="text-xl font-bold text-[#48104a]">Spectrum</div>
         <div className="text-sm text-gray-500">DeFi Yield Simulator</div>
       </div>
 

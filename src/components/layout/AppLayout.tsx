@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, cloneElement, isValidElement } from 'react'
 import { Sidebar, TabId } from './Sidebar'
 
 interface AppLayoutProps {
@@ -21,6 +21,12 @@ export function AppLayout({
   const renderContent = () => {
     switch (activeTab) {
       case 'portfolio':
+        // Pass navigation function to portfolio content
+        if (isValidElement(portfolioContent)) {
+          return cloneElement(portfolioContent as React.ReactElement<{ onNavigate?: (tab: TabId) => void }>, {
+            onNavigate: setActiveTab
+          })
+        }
         return portfolioContent
       case 'eth':
         return ethContent
@@ -45,3 +51,5 @@ export function AppLayout({
     </div>
   )
 }
+
+export type { TabId }
