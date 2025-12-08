@@ -4,34 +4,32 @@ import { useState, ReactNode } from 'react'
 import { Sidebar, TabId } from './Sidebar'
 
 interface AppLayoutProps {
-  globalControls: ReactNode
+  portfolioContent: ReactNode
   ethContent: ReactNode
   stablecoinContent: ReactNode
   hedgeContent: ReactNode
-  resultsContent: ReactNode
 }
 
 export function AppLayout({
-  globalControls,
+  portfolioContent,
   ethContent,
   stablecoinContent,
   hedgeContent,
-  resultsContent,
 }: AppLayoutProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('eth')
+  const [activeTab, setActiveTab] = useState<TabId>('portfolio')
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'portfolio':
+        return portfolioContent
       case 'eth':
         return ethContent
       case 'stablecoin':
         return stablecoinContent
       case 'hedge':
         return hedgeContent
-      case 'results':
-        return resultsContent
       default:
-        return ethContent
+        return portfolioContent
     }
   }
 
@@ -40,18 +38,10 @@ export function AppLayout({
       {/* Sidebar - full height */}
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Right side: Global Controls + Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Global Controls */}
-        <div className="border-b border-gray-200">
-          {globalControls}
-        </div>
-
-        {/* Content Area */}
-        <main className="flex-1 p-4 overflow-y-auto">
-          {renderContent()}
-        </main>
-      </div>
+      {/* Content Area */}
+      <main className="flex-1 p-4 overflow-y-auto">
+        {renderContent()}
+      </main>
     </div>
   )
 }

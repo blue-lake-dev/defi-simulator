@@ -7,12 +7,12 @@ import { useHyperliquid, FALLBACK_FUNDING_RATE } from '@/hooks/useHyperliquid'
 import { COLLATERAL_PARAMS } from '@/lib/constants'
 import { DualLogo } from '@/components/ui/Logo'
 import { getProtocolLogo, getTokenLogo } from '@/lib/logos'
-
-// Note: DualLogo imports are kept for the Allocation Breakdown section on the right side
+import { PortfolioAllocationWidget } from '@/components/widgets/PortfolioAllocationWidget'
+import { EthPriceCompactWidget } from '@/components/widgets/EthPriceCompactWidget'
 
 type BreakdownView = 'eth' | 'stablecoin' | 'hedge'
 
-export function ResultsTab() {
+export function PortfolioTab() {
   const {
     investmentAmount,
     investmentPeriod,
@@ -302,6 +302,16 @@ export function ResultsTab() {
 
   return (
     <div className="space-y-4">
+      {/* Global Controls: Portfolio Allocation + ETH Price */}
+      <div className="flex gap-4">
+        <div className="flex-1 bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+          <PortfolioAllocationWidget />
+        </div>
+        <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+          <EthPriceCompactWidget />
+        </div>
+      </div>
+
       {/* Card 1: Expected Balance Hero */}
       <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
         <div className="flex items-start justify-between">
