@@ -12,7 +12,6 @@ export function PortfolioAllocationWidget() {
     setInvestmentAmount,
     setEthRatio,
     setHedgeConfig,
-    reset,
   } = usePortfolioStore()
 
   // Always show hedge allocation (don't check enabled flag for display)
@@ -46,13 +45,24 @@ export function PortfolioAllocationWidget() {
     return parseFloat(cleaned) || 0
   }
 
+  const handleReset = () => {
+    setInvestmentAmount(1000000)
+    setEthRatio(40)
+    setHedgeConfig({
+      enabled: false,
+      allocationPercent: 0,
+      fundAllocation: 80,
+      leverage: 5,
+    })
+  }
+
   return (
     <div className="p-6 h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-gray-900">Portfolio Allocation</h3>
         <button
-          onClick={reset}
+          onClick={handleReset}
           className="text-sm text-gray-500 hover:text-gray-700 hover:underline transition-colors"
         >
           Reset
