@@ -15,8 +15,9 @@ interface ReturnBreakdownProps {
   // Leverage (broken down)
   leverageDeployYield: number
   leverageBorrowCost: number
-  // Hedge
-  hedgeReturn: number
+  // Hedge (broken down)
+  hedgeFundingIncome: number
+  hedgePnL: number
   // Total
   totalReturn: number
   // Context
@@ -32,7 +33,8 @@ export function ReturnBreakdown({
   stablecoinYield,
   leverageDeployYield,
   leverageBorrowCost,
-  hedgeReturn,
+  hedgeFundingIncome,
+  hedgePnL,
   totalReturn,
   hasLeverage,
   hasHedge,
@@ -190,13 +192,37 @@ export function ReturnBreakdown({
           </div>
         )}
 
-        {/* Hedge Return */}
+        {/* Hedge Return - collapsible */}
         {hasHedge && (
-          <div className="flex items-center justify-between px-4 py-2">
-            <span className="text-muted-foreground">Hedge Return</span>
-            <span className={cn("font-medium", getValueColor(hedgeReturn))}>
-              {formatUsd(hedgeReturn)}
-            </span>
+          <div className="px-4 py-2">
+            <button
+              onClick={() => toggleRow('hedge')}
+              className="flex items-center justify-between w-full cursor-pointer hover:text-foreground"
+            >
+              <span className="text-muted-foreground flex items-center gap-1">
+                Hedge Return
+                <ChevronIcon expanded={expandedRows.has('hedge')} />
+              </span>
+              <span className={cn("font-medium", getValueColor(hedgeFundingIncome + hedgePnL))}>
+                {formatUsd(hedgeFundingIncome + hedgePnL)}
+              </span>
+            </button>
+            {expandedRows.has('hedge') && (
+              <div className="mt-2 ml-4 space-y-1 text-xs border-l-2 border-border pl-3">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span>Funding Income</span>
+                  <span className={getValueColor(hedgeFundingIncome)}>
+                    {formatUsd(hedgeFundingIncome)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span>Position P&L</span>
+                  <span className={getValueColor(hedgePnL)}>
+                    {formatUsd(hedgePnL)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

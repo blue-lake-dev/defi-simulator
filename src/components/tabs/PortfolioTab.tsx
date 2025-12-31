@@ -646,7 +646,8 @@ export function PortfolioTab({ onNavigate }: PortfolioTabProps) {
         stablecoinYield={totalStablecoinYield}
         leverageDeployYield={totalLeverageYield}
         leverageBorrowCost={totalBorrowCost}
-        hedgeReturn={hedgeConfig.enabled ? hedgeNetReturn : 0}
+        hedgeFundingIncome={hedgeConfig.enabled ? hedgeFundingIncome : 0}
+        hedgePnL={hedgeConfig.enabled ? hedgePnL : 0}
         totalReturn={totalReturn}
         hasLeverage={borrowedTotal > 0}
         hasHedge={hedgeConfig.enabled}
