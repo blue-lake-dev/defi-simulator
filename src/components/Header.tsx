@@ -15,13 +15,13 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-bold text-[#48104a]">Spectrum</span>
+          <img src="/blue-lake-logo.webp" alt="Blue Lake" className="h-8 w-auto" />
           <span className="text-gray-300">|</span>
-          <span className="text-base font-medium text-gray-500">DeFi Yield Simulator</span>
+          <span className="text-base font-medium text-gray-500">DeFi Simulator</span>
         </div>
 
         {/* Language Toggle */}
-        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+        <div className="flex items-center border border-gray-200 rounded-md overflow-hidden">
           <button
             onClick={() => setLang('en')}
             className={`px-3 py-1.5 text-sm font-medium transition-colors ${

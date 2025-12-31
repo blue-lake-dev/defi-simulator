@@ -77,7 +77,7 @@ export function HedgeTab() {
   // Empty state when hedge allocation is 0
   if (hedgeAllocationPercent === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-16 h-16 mb-4 text-gray-300">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -94,9 +94,9 @@ export function HedgeTab() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Card 1: Hedge Configuration */}
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>
@@ -123,7 +123,7 @@ export function HedgeTab() {
               max="100"
               value={fundAllocation}
               onChange={(e) => handleFundAllocationChange(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer"
               style={{
                 background: `linear-gradient(to right, #48104a 0%, #48104a ${fundAllocation}%, #E5E7EB ${fundAllocation}%, #E5E7EB 100%)`
               }}
@@ -153,7 +153,7 @@ export function HedgeTab() {
               max={maxLeverage}
               value={leverage}
               onChange={(e) => handleLeverageChange(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer"
               style={{
                 background: `linear-gradient(to right, #48104a 0%, #48104a ${((leverage - 1) / (maxLeverage - 1)) * 100}%, #E5E7EB ${((leverage - 1) / (maxLeverage - 1)) * 100}%, #E5E7EB 100%)`
               }}
@@ -176,10 +176,10 @@ export function HedgeTab() {
       </div>
 
       {/* Card 2: Position Details */}
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
         <h3 className="text-base font-semibold text-gray-900 mb-4">Position Details</h3>
 
-        <div className="bg-[#f9f7fa] rounded-xl p-6">
+        <div className="bg-[#f9f7fa] rounded-md p-6">
           <div className="grid grid-cols-3 gap-8">
             {/* Collateral */}
             <div>
@@ -208,7 +208,7 @@ export function HedgeTab() {
       </div>
 
       {/* Card 3: Funding Rate */}
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8 border-l-4 border-l-[#2D6B4F]">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8 border-l-4 border-l-[#2D6B4F]">
         <div className="flex items-start justify-between">
           {/* Left side */}
           <div>

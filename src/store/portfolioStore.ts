@@ -84,7 +84,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
     (set, get) => ({
       // Initial state - Portfolio Setup
       investmentAmount: 1000000,
-      ethRatio: 40,
+      ethRatio: 70,
       investmentPeriod: 1,
 
       // Initial state - ETH Price
@@ -221,7 +221,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
       reset: () =>
         set({
           investmentAmount: 1000000,
-          ethRatio: 40,
+          ethRatio: 70,
           investmentPeriod: 1,
           ethPrice: 3500,
           priceChangeScenario: 5,

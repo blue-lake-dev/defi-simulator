@@ -74,7 +74,7 @@ export function EthProductsTab() {
   const hasSelectedItems = ethAllocations.some((a) => a.selected)
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
+    <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
       {/* Header */}
       <div className="pb-6">
         <div className="flex items-start justify-between">
@@ -133,7 +133,7 @@ export function EthProductsTab() {
             return (
               <div
                 key={product.id}
-                className={`flex items-center gap-4 px-4 rounded-2xl transition-colors h-[92px] ${
+                className={`flex items-center gap-4 px-4 rounded-md transition-colors h-[92px] ${
                   isSelected
                     ? 'bg-[#F5F5F5] border-l-4 border-l-[#48104a]'
                     : 'bg-[#F5F5F5] opacity-60'
@@ -164,7 +164,7 @@ export function EthProductsTab() {
                 </div>
 
                 {/* APY Badge */}
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium ${
                   isSelected
                     ? 'bg-[#f0fdf4] text-[#15803d]'
                     : 'bg-gray-100 text-gray-500'
@@ -183,7 +183,7 @@ export function EthProductsTab() {
                     onChange={(e) => handleWeightChange(product.id, e.target.value)}
                     placeholder="—"
                     disabled={!isSelected}
-                    className="w-16 px-3 py-2 text-sm text-center font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#48104a]/20 focus:border-[#48104a] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-16 px-3 py-2 text-sm text-center font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#48104a]/20 focus:border-[#48104a] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-sm text-gray-400">%</span>
                 </div>
@@ -197,7 +197,7 @@ export function EthProductsTab() {
                         setSelectedProductId(product.id)
                         setLeverageModalOpen(true)
                       }}
-                      className={`text-sm px-4 py-2 rounded-lg border transition-colors ${
+                      className={`text-sm px-4 py-2 rounded-md border transition-colors ${
                         leverage?.enabled
                           ? 'bg-[#fef9e6] border-[#d4a84b] text-[#8b6914] font-medium'
                           : 'border-[#48104a] text-[#48104a] hover:bg-[#48104a]/5 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400'

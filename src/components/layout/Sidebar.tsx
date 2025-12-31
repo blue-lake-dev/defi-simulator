@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 
-type TabId = 'portfolio' | 'eth' | 'stablecoin' | 'hedge'
+type TabId = 'overview' | 'eth' | 'stablecoin' | 'hedge' | 'backtest'
 
 interface Tab {
   id: TabId
   label: string
   icon: React.ReactNode
+  disabled?: boolean
 }
 
 // ETH diamond logo
@@ -35,17 +36,24 @@ const ShieldIcon = () => (
   </svg>
 )
 
-const PortfolioIcon = () => (
+const OverviewIcon = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
   </svg>
 )
 
+const BacktestIcon = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
 const tabs: Tab[] = [
-  { id: 'portfolio', label: 'Portfolio', icon: <PortfolioIcon /> },
-  { id: 'eth', label: 'ETH Products', icon: <EthIcon /> },
-  { id: 'stablecoin', label: 'Stablecoin Products', icon: <StablecoinIcon /> },
+  { id: 'overview', label: 'Overview', icon: <OverviewIcon /> },
+  { id: 'eth', label: 'ETH', icon: <EthIcon /> },
+  { id: 'stablecoin', label: 'Stablecoin', icon: <StablecoinIcon /> },
   { id: 'hedge', label: 'Hedge', icon: <ShieldIcon /> },
+  { id: 'backtest', label: 'Backtest', icon: <BacktestIcon />, disabled: true },
 ]
 
 interface SidebarProps {
@@ -57,37 +65,44 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [lang, setLang] = useState<'en' | 'kr'>('en')
 
   return (
-    <nav className="w-[240px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full">
+    <nav className="w-[240px] flex-shrink-0 bg-card border-r border-border flex flex-col h-full">
       {/* Logo Section */}
-      <div className="px-6 pt-6 pb-4">
-        <div className="text-xl font-bold text-[#48104a]">Spectrum</div>
-        <div className="text-sm text-gray-500">DeFi Yield Simulator</div>
+      <div className="px-4 pt-4 pb-3">
+        <div className="text-lg font-semibold text-foreground">Blue Lake</div>
+        <div className="text-sm text-muted-foreground">DeFi Simulator</div>
       </div>
 
       {/* Divider */}
-      <div className="mx-4 border-t border-gray-200" />
+      <div className="mx-4 border-t border-border" />
 
       {/* Navigation */}
       <div className="flex-1 px-4 pt-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
+            const isDisabled = tab.disabled
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+                onClick={() => !isDisabled && onTabChange(tab.id)}
+                disabled={isDisabled}
                 className={`
-                  flex items-center gap-3 text-left px-4 py-3 rounded-xl transition-colors text-sm font-medium
-                  ${isActive
-                    ? 'bg-[#f5f0f5] text-[#48104a]'
-                    : 'text-gray-500 hover:bg-gray-50'
+                  flex items-center gap-3 text-left px-3 py-2 rounded-md transition-colors text-sm font-medium
+                  ${isDisabled
+                    ? 'text-muted-foreground/50 cursor-not-allowed'
+                    : isActive
+                      ? 'bg-accent text-accent-foreground'
+                      : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
                   }
                 `}
               >
-                <span className={isActive ? 'text-[#48104a]' : 'text-gray-400'}>
+                <span className={isDisabled ? 'opacity-50' : ''}>
                   {tab.icon}
                 </span>
-                {tab.label}
+                <span className="flex-1">{tab.label}</span>
+                {isDisabled && (
+                  <span className="text-xs bg-muted px-1.5 py-0.5 rounded">Soon</span>
+                )}
               </button>
             )
           })}
@@ -96,13 +111,13 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       {/* Language Toggle */}
       <div className="px-4 pb-6">
-        <div className="flex items-center bg-gray-100 rounded-full p-1">
+        <div className="flex items-center bg-muted rounded-full p-1">
           <button
             onClick={() => setLang('en')}
             className={`flex-1 px-4 py-1.5 text-sm font-medium transition-colors rounded-full ${
               lang === 'en'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             EN
@@ -111,8 +126,8 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             onClick={() => setLang('kr')}
             className={`flex-1 px-4 py-1.5 text-sm font-medium transition-colors rounded-full ${
               lang === 'kr'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             KR

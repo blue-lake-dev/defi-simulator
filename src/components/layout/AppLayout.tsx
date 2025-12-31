@@ -4,48 +4,60 @@ import { useState, ReactNode, cloneElement, isValidElement } from 'react'
 import { Sidebar, TabId } from './Sidebar'
 
 interface AppLayoutProps {
-  portfolioContent: ReactNode
+  overviewContent: ReactNode
   ethContent: ReactNode
   stablecoinContent: ReactNode
   hedgeContent: ReactNode
 }
 
 export function AppLayout({
-  portfolioContent,
+  overviewContent,
   ethContent,
   stablecoinContent,
   hedgeContent,
 }: AppLayoutProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('portfolio')
+  const [activeTab, setActiveTab] = useState<TabId>('overview')
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'portfolio':
-        // Pass navigation function to portfolio content
-        if (isValidElement(portfolioContent)) {
-          return cloneElement(portfolioContent as React.ReactElement<{ onNavigate?: (tab: TabId) => void }>, {
+      case 'overview':
+        // Pass navigation function to overview content
+        if (isValidElement(overviewContent)) {
+          return cloneElement(overviewContent as React.ReactElement<{ onNavigate?: (tab: TabId) => void }>, {
             onNavigate: setActiveTab
           })
         }
-        return portfolioContent
+        return overviewContent
       case 'eth':
         return ethContent
       case 'stablecoin':
         return stablecoinContent
       case 'hedge':
         return hedgeContent
+      case 'backtest':
+        return (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-4xl mb-4">📊</div>
+              <h2 className="text-xl font-semibold text-foreground mb-2">Backtest Coming Soon</h2>
+              <p className="text-muted-foreground text-sm max-w-md">
+                Analyze historical performance of your portfolio strategy across different market conditions.
+              </p>
+            </div>
+          </div>
+        )
       default:
-        return portfolioContent
+        return overviewContent
     }
   }
 
   return (
-    <div className="h-screen bg-[#FAFAFA] flex overflow-hidden">
+    <div className="h-screen bg-background flex overflow-hidden">
       {/* Sidebar - full height */}
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Content Area */}
-      <main className="flex-1 p-4 overflow-y-auto">
+      <main className="flex-1 p-2 overflow-y-auto">
         {renderContent()}
       </main>
     </div>

@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <HydrationGuard>
       <AppLayout
-        portfolioContent={<PortfolioTab />}
+        overviewContent={<PortfolioTab />}
         ethContent={<EthProductsTab />}
         stablecoinContent={<StablecoinProductsTab />}
         hedgeContent={<HedgeTab />}

@@ -150,13 +150,13 @@ export function LeverageConfigModal({
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleApply}
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-900 rounded-lg hover:bg-purple-800 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-900 rounded-md hover:bg-purple-800 transition-colors"
             >
               Apply Leverage
             </button>
@@ -166,7 +166,7 @@ export function LeverageConfigModal({
     >
       <div className="space-y-6">
         {/* Position Summary */}
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-md p-4">
           <p className="text-sm text-gray-600">
             Your {product.name} position: <span className="font-semibold text-gray-900">{formatCurrency(positionValue)}</span>
           </p>
@@ -277,7 +277,7 @@ export function LeverageConfigModal({
               <button
                 key={option.asset}
                 onClick={() => setBorrowAsset(option.asset)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border transition-colors ${
                   borrowAsset === option.asset
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
@@ -304,7 +304,7 @@ export function LeverageConfigModal({
           <select
             value={deployTargetId}
             onChange={(e) => setDeployTargetId(e.target.value)}
-            className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+            className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
           >
             {stablecoinProducts.map((product) => (
               <option key={product.id} value={product.id}>
@@ -315,7 +315,7 @@ export function LeverageConfigModal({
         </div>
 
         {/* Leverage Impact Summary */}
-        <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
+        <div className="bg-white border border-gray-200 rounded-md p-4 space-y-3">
           <h4 className="font-medium text-gray-900">Leverage Impact</h4>
 
           <div className="space-y-2 text-sm">

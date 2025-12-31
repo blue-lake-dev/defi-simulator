@@ -62,7 +62,7 @@ export function Input({
           onChange={handleChange}
           placeholder={placeholder}
           step={step}
-          className="w-full px-3 py-2.5 text-lg font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-900/20 focus:border-purple-900 transition-colors"
+          className="w-full px-3 py-2.5 text-lg font-medium text-gray-900 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-900/20 focus:border-purple-900 transition-colors"
         />
         {suffix && (
           <span className="text-gray-500 text-sm ml-2">{suffix}</span>
@@ -134,7 +134,7 @@ export function CompactInput({
         value={localValue}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`${width} px-2 py-2 text-center text-lg font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-900/20 focus:border-purple-900 transition-colors`}
+        className={`${width} px-2 py-2 text-center text-lg font-medium text-gray-900 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-900/20 focus:border-purple-900 transition-colors`}
       />
       {suffix && (
         <span className="text-gray-500 text-sm">{suffix}</span>

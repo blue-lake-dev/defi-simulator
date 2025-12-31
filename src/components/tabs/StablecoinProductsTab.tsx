@@ -105,9 +105,9 @@ export function StablecoinProductsTab() {
   const hasSelectedItems = stablecoinAllocations.some((a) => a.selected)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Card 1: Base Allocation */}
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
         {/* Header */}
         <div className="pb-6">
           <div className="flex items-start justify-between">
@@ -161,7 +161,7 @@ export function StablecoinProductsTab() {
             return (
               <div
                 key={product.id}
-                className={`flex items-center gap-4 px-4 rounded-2xl transition-colors h-[92px] ${
+                className={`flex items-center gap-4 px-4 rounded-md transition-colors h-[92px] ${
                   isSelected
                     ? 'bg-[#F5F5F5] border-l-4 border-l-[#48104a]'
                     : 'bg-[#F5F5F5] opacity-60'
@@ -191,7 +191,7 @@ export function StablecoinProductsTab() {
                 </div>
 
                 {/* APY Badge */}
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium ${
                   isSelected
                     ? 'bg-[#f0fdf4] text-[#15803d]'
                     : 'bg-gray-100 text-gray-500'
@@ -210,7 +210,7 @@ export function StablecoinProductsTab() {
                     onChange={(e) => handleWeightChange(product.id, e.target.value)}
                     placeholder="—"
                     disabled={!isSelected}
-                    className="w-16 px-3 py-2 text-sm text-center font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#48104a]/20 focus:border-[#48104a] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-16 px-3 py-2 text-sm text-center font-medium text-gray-900 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#48104a]/20 focus:border-[#48104a] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-sm text-gray-400">%</span>
                 </div>
@@ -222,7 +222,7 @@ export function StablecoinProductsTab() {
 
       {/* Card 2: Leveraged Funds (only if leverage active) */}
       {hasLeveragedFunds && (
-        <div className="rounded-3xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8" style={{ background: 'linear-gradient(135deg, #FAF5FF 0%, #FFFFFF 70.71%)' }}>
+        <div className="rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8" style={{ background: 'linear-gradient(135deg, #FAF5FF 0%, #FFFFFF 70.71%)' }}>
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ export function StablecoinProductsTab() {
             {leveragedDeployments.map((deployment) => (
               <div
                 key={deployment.productId}
-                className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-[#F5F5F5] border-l-4 border-l-[#48104a]"
+                className="flex items-center gap-4 px-4 py-4 rounded-md bg-[#F5F5F5] border-l-4 border-l-[#48104a]"
               >
                 <DualLogo
                   tokenSrc={getTokenLogo(deployment.productName)}
@@ -270,7 +270,7 @@ export function StablecoinProductsTab() {
       )}
 
       {/* Card 3: Summary */}
-      <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-6">
+      <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-6">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm text-gray-500">Allocated Stablecoin Exposure</div>
