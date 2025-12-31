@@ -106,13 +106,13 @@ export function EthProductsTab() {
 
       {/* Product Table */}
       <div className="text-xs">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead>
             <tr className="border-b border-border text-muted-foreground">
-              <th className="text-left font-normal py-2 px-3">Product</th>
-              <th className="text-right font-normal py-2 px-3">APY</th>
-              <th className="text-right font-normal py-2 px-3">Weight</th>
-              <th className="text-right font-normal py-2 px-3">Leverage</th>
+              <th className="text-left font-normal py-2 px-3 w-1/4">Product</th>
+              <th className="text-right font-normal py-2 px-3 w-1/4">APY</th>
+              <th className="text-right font-normal py-2 px-3 w-1/4">Weight</th>
+              <th className="text-right font-normal py-2 px-3 w-1/4">Leverage</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
