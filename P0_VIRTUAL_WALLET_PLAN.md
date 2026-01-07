@@ -1,7 +1,8 @@
 # P0: Virtual Wallet UI - Implementation Plan
 
-> **Status**: Planning
+> **Status**: In Progress
 > **Created**: 2026-01-07
+> **Last Updated**: 2026-01-07
 > **Purpose**: Reference document for Claude Code sessions
 
 ---
@@ -67,97 +68,135 @@ Account (future)
         └── Per-protocol positions (deposit, borrow, stake, hedge)
 ```
 
-### Core Types
+### Core Types (Actual Implementation)
 
 ```typescript
 // ============ STRATEGY ============
 interface Strategy {
   id: string
   name: string
-  createdAt: Date
-  updatedAt: Date
-
-  wallet: VirtualWallet
-  positions: Position[]
-
-  // P1: Will add
-  // rebalancingRules?: RebalancingRule[]
-
-  // P2: Will add
-  // backtestConfig?: BacktestConfig
-  // backtestResults?: BacktestResult[]
+  createdAt: number      // Immutable timestamp
+  updatedAt: number
+  wallet: Wallet
+  initialInvestmentUsd: number
+  ethPriceAtCreation: number  // Editable for scenarios
 }
 
 // ============ WALLET ============
-interface VirtualWallet {
-  initialCapitalUsd: number
+interface Wallet {
+  id: string
+  name: string
   balances: TokenBalance[]
+  positions: Position[]
 }
 
 interface TokenBalance {
   tokenId: string
-  amount: number          // Actual token amount (not USD)
-  // USD value computed from token price
+  amount: number
 }
 
 // ============ TOKENS ============
+type TokenCategory = 'native' | 'lst' | 'stablecoin' | 'yield'
+
 interface Token {
-  id: string              // 'eth', 'wsteth', 'usdc', etc.
+  id: string
   symbol: string
   name: string
+  category: TokenCategory
   decimals: number
-  price: number           // USD price
-
-  // Protocol capabilities
-  isCollateral: boolean
-  isBorrowable: boolean
-  isStakeable: boolean
-
-  // Collateral params (if applicable)
+  apy?: number
+  apySource?: 'defillama' | 'manual'
+  poolId?: string  // DeFiLlama UUID
   collateralParams?: {
-    protocol: string
     maxLtv: number
     liquidationThreshold: number
-  }[]
+  }
 }
 
-// ============ POSITIONS ============
-interface Position {
+// ============ PROTOCOLS & POOLS ============
+type ProtocolCategory = 'lending' | 'staking' | 'yield' | 'pendle' | 'perp'
+
+interface Pool {
   id: string
-  protocol: ProtocolId
-  type: 'deposit' | 'borrow' | 'stake' | 'hedge'
-
-  // Common
-  tokenId: string
-  amount: number
-
-  // For deposits/stakes
-  apy?: number
-  isCollateralEnabled?: boolean
-
-  // For borrows
-  borrowRate?: number
-
-  // For hedge (Hyperliquid)
-  direction?: 'long' | 'short'
-  leverage?: number
-  margin?: number
-  fundingRate?: number
-
-  // Computed (per lending protocol position group)
-  healthFactor?: number
-  liquidationPrice?: number
+  name: string
+  inputToken: string      // Token you deposit
+  outputToken?: string    // Receipt token (if applicable)
+  apy: number
+  poolId?: string         // DeFiLlama UUID
+  underlyingToken?: string  // Pendle-specific
+  maturity?: string       // Pendle-specific
+  lltv?: number           // Morpho market-specific
 }
 
-type ProtocolId =
-  | 'aave-v3'
-  | 'morpho'
-  | 'lido'
-  | 'etherfi'
-  | 'ethena'
-  | 'maple'
-  | 'pendle'
-  | 'hyperliquid'
+interface Protocol {
+  id: string
+  name: string
+  category: ProtocolCategory
+  description: string
+  supportedTokens: string[]
+  pools?: Pool[]
+  borrowableAssets?: string[]
+  borrowRates?: Record<string, number>
+}
+
+// ============ POSITIONS (Discriminated Union) ============
+interface BasePosition {
+  id: string
+  createdAt: number
+}
+
+interface LendingPosition extends BasePosition {
+  type: 'lending'
+  protocol: 'aave-v3' | 'morpho'
+  collateral: { tokenId: string; amount: number }[]
+  borrows: { tokenId: string; amount: number; borrowRate: number }[]
+  marketId?: string  // Morpho-specific
+  lltv?: number
+}
+
+interface StakePosition extends BasePosition {
+  type: 'stake'
+  protocol: 'lido' | 'etherfi'
+  inputTokenId: string
+  outputTokenId: string
+  amount: number
+  apy: number
+}
+
+interface YieldPosition extends BasePosition {
+  type: 'yield'
+  protocol: 'ethena' | 'maple'
+  inputTokenId: string
+  outputTokenId: string
+  amount: number
+  apy: number
+}
+
+interface PendlePosition extends BasePosition {
+  type: 'pendle'
+  protocol: 'pendle'
+  ptTokenId: string
+  underlyingTokenId: string
+  amount: number
+  maturity: string
+  impliedApy: number
+  purchasePrice: number
+}
+
+interface PerpPosition extends BasePosition {
+  type: 'perp'
+  protocol: 'hyperliquid'
+  asset: string           // ETH, BTC, etc.
+  direction: 'long' | 'short'
+  marginTokenId: string
+  marginAmount: number
+  positionSize: number
+  leverage: number
+  entryPrice: number
+  fundingRate: number
+}
+
+type Position = LendingPosition | StakePosition | YieldPosition | PendlePosition | PerpPosition
 ```
 
 ---
@@ -361,14 +400,14 @@ type ProtocolId =
 > For 5yr experienced fullstack developer
 > Estimated total: 7 days (1 week)
 
-### Day 1 - Foundation & Store
-- [ ] Create `src/types/strategy.ts` with all interfaces (Strategy, Wallet, Position, Token)
-- [ ] Create `src/lib/tokens.ts` - token registry (ETH, wstETH, weETH, USDC, USDT, sUSDe, etc.)
-- [ ] Create `src/lib/protocols.ts` - protocol definitions
-- [ ] Create `src/store/strategyStore.ts` - new Zustand store with basic actions
-- [ ] Create `src/components/layout/Header.tsx` - persistent header with tab name
-- [ ] Update `Sidebar.tsx` with new navigation structure
-- [ ] Update `AppLayout.tsx` for new tab routing + header integration
+### Day 1 - Foundation & Store ✅
+- [x] Create `src/types/strategy.ts` with all interfaces (Strategy, Wallet, Position, Token)
+- [x] Create `src/lib/tokens.ts` - token registry (ETH, wstETH, weETH, USDC, USDT, sUSDe, etc.)
+- [x] Create `src/lib/protocols.ts` - protocol definitions with Pool structure
+- [x] Create `src/store/strategyStore.ts` - new Zustand store with basic actions
+- [x] Create `src/components/layout/Header.tsx` - persistent header with tab name
+- [x] Update `Sidebar.tsx` with new navigation structure (protocol logos from lib/logos.ts)
+- [x] Update `AppLayout.tsx` for new tab routing + header integration
 
 ### Day 2 - Wallet Tab & Swap
 - [ ] Create `src/components/tabs/WalletTab.tsx` - balance list, initial capital input
@@ -459,11 +498,14 @@ type ProtocolId =
 
 ## 11. Files to Modify/Create
 
-### New Files
-- `src/types/strategy.ts` - New type definitions
-- `src/store/strategyStore.ts` - New Zustand store
-- `src/lib/tokens.ts` - Token registry
-- `src/lib/protocols.ts` - Protocol configurations
+### New Files (Day 1 - Created ✅)
+- `src/types/strategy.ts` - New type definitions ✅
+- `src/store/strategyStore.ts` - New Zustand store ✅
+- `src/lib/tokens.ts` - Token registry ✅
+- `src/lib/protocols.ts` - Protocol configurations with Pool structure ✅
+- `src/components/layout/Header.tsx` - Persistent header with tab name ✅
+
+### New Files (Day 2+)
 - `src/components/tabs/WalletTab.tsx`
 - `src/components/tabs/DashboardTab.tsx`
 - `src/components/tabs/AaveTab.tsx`
@@ -477,12 +519,11 @@ type ProtocolId =
 - `src/components/modals/SwapModal.tsx` (accessed from Wallet tab)
 - `src/components/modals/LoopWizardModal.tsx` (accessed from Aave/Morpho tabs)
 
-### Files to Update
-- `src/components/layout/Sidebar.tsx` - New navigation structure
-- `src/components/layout/AppLayout.tsx` - Tab management + header integration
-
-### New Layout Files
-- `src/components/layout/Header.tsx` - Persistent header with tab name
+### Files Updated (Day 1 ✅)
+- `src/components/layout/Sidebar.tsx` - New navigation structure with protocol logos ✅
+- `src/components/layout/AppLayout.tsx` - Tab management + header integration ✅
+- `src/lib/logos.ts` - Added Hyperliquid logo ✅
+- `src/app/page.tsx` - Simplified to use new AppLayout ✅
 
 ### Files to Eventually Remove
 - `src/components/tabs/PortfolioTab.tsx`
@@ -493,5 +534,5 @@ type ProtocolId =
 
 ---
 
-_Document Version: 1.0_
+_Document Version: 1.1_
 _Last Updated: 2026-01-07_

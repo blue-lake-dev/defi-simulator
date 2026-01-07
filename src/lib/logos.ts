@@ -19,6 +19,7 @@ export const PROTOCOL_LOGOS: Record<string, string> = {
   'Morpho': 'https://coin-images.coingecko.com/coins/images/29837/small/Morpho-token-icon.png',
   'Ethena': 'https://assets.coingecko.com/coins/images/33613/small/USDE.png',
   'Maple': 'https://assets.coingecko.com/coins/images/14097/small/photo_2021-05-03_14.20.41.jpeg',
+  'Hyperliquid': 'https://assets.coingecko.com/coins/images/50882/standard/hyperliquid.jpg',
 }
 
 // Token logos - maps product name to underlying token logo
