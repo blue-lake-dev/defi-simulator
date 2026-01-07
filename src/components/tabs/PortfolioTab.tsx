@@ -66,6 +66,23 @@ export function PortfolioTab({ onNavigate }: PortfolioTabProps) {
     setLocalScenario(priceChangeScenario >= 0 ? `+${priceChangeScenario}` : `${priceChangeScenario}`)
   }, [priceChangeScenario])
 
+  // Fetch ETH price on initial mount
+  useEffect(() => {
+    const fetchInitialPrice = async () => {
+      try {
+        const response = await fetch(
+          'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'
+        )
+        if (!response.ok) return
+        const data = await response.json()
+        if (data.ethereum?.usd) setEthPrice(data.ethereum.usd)
+      } catch (err) {
+        console.error('Failed to fetch initial ETH price:', err)
+      }
+    }
+    fetchInitialPrice()
+  }, [setEthPrice])
+
   // Input handlers
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, '')
